@@ -22,6 +22,9 @@ int main(int argc, char const *argv[])
     cout << "a * b mod m = " << ModMultBarrett(a, b, m, z, logm) << endl;
     cout << "(check) a * b mod m = " << (a * b) % m << endl;
 
+
+    uint64_t s = ShoupPrecompute(b, m);
+    cout << "a * b mod m = " << ModMulShoup(a, b, m, s) << endl;
     
     return 0;
 }

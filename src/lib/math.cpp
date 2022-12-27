@@ -63,3 +63,28 @@ uint64_t ModMultBarrett(uint64_t a, uint64_t b, uint64_t m, uint64_t prec, uint6
 }
 
 //*/
+
+
+// метод Шупа применяется для умножения на константу
+// https://pdfs.semanticscholar.org/e000/fa109f1b2a6a3e52e04462bac4b7d58140c9.pdf
+
+uint64_t ShoupPrecompute(uint64_t c, uint64_t m) {
+    unsigned __int128 w = static_cast<unsigned __int128>(c);
+    w <<= 64;
+    w /= m;
+    return static_cast<uint64_t>(w);
+}
+
+uint64_t ModMulShoup(uint64_t a, uint64_t c, uint64_t m, uint64_t prec) {
+    uint64_t res;
+   
+    unsigned __int128 aa  = static_cast<unsigned __int128>(a);
+    unsigned __int128 mul = aa * c;
+    unsigned __int128 tmp = ((aa * prec) >> 64) * m;
+
+    res = static_cast<uint64_t>(mul - tmp);  // mod 2^64
+
+    if (res >= m) res -= m;
+
+    return res;
+}
