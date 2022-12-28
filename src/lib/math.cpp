@@ -19,16 +19,16 @@ uint64_t ModMultBarrett(uint64_t a, uint64_t b, uint64_t m, uint64_t prec, uint6
     uint64_t res;
     //int64_t bar = 2 * logm;
 
-    uint64_t mul = a * b;
+    unsigned __int128 mul = static_cast<unsigned __int128>(a) * b;
 
-    uint64_t tmp1 = mul;
-    uint64_t tmp2 = tmp1 >> (logm-2);
+    unsigned __int128 tmp1 = mul;
+    unsigned __int128 tmp2 = tmp1 >> (logm-2);
 
     tmp1 = tmp2 * prec;
-    tmp2 = tmp1 >> (msb + 5);
+    tmp2 = tmp1 >> (logm + 5);
     tmp1 = tmp2 * m;
 
-    res = (mul - tmp1);
+    res = static_cast<uint64_t>(mul - tmp1);
 
     /*
     uint64_t tmp = mul >> (logm-2);
