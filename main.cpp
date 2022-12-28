@@ -6,10 +6,18 @@ using namespace std;
 
 int main(int argc, char const *argv[])
 {
-    uint64_t m = 17;
-    uint64_t logm = 5;
-    uint64_t a = 9;
-    uint64_t b = 11;
+    // uint64_t m = 17;
+    // uint64_t logm = 5;
+    // uint64_t a = 9;
+    // uint64_t b = 11;
+
+
+//пример больших чисел для большого умножения...
+    uint64_t m = 4294967311;
+    uint64_t logm = 33;
+    uint64_t a = 4294967311 - 8239042;
+    uint64_t b = 4294967311 - 23984778;
+
 
     cout << "a = " << a << endl;
     cout << "b = " << b << endl;
@@ -29,10 +37,4 @@ int main(int argc, char const *argv[])
     return 0;
 }
 
-/*
-пример больших чисел для большого умножения...
-    uint64_t m = 4294967311;
-    uint64_t logm = 33;
-    uint64_t a = 4294967311 - 8239042;
-    uint64_t b = 4294967311 - 23984778;
-*/
+
