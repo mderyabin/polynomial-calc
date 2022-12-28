@@ -11,22 +11,34 @@ uint64_t ModAdd(uint64_t a, uint64_t b, uint64_t m) {
 //*
 // https://core.ac.uk/download/pdf/287482281.pdf
 uint64_t BarrettPrecompute(uint64_t m, uint64_t logm) {
-    uint64_t bar = 2 * logm;
+    uint64_t bar = 2 * logm + 3;
     return (static_cast<unsigned __int128>(1) << bar) / m;
 }
 
 uint64_t ModMultBarrett(uint64_t a, uint64_t b, uint64_t m, uint64_t prec, uint64_t logm) {
-	uint64_t res;
+    uint64_t res;
     //int64_t bar = 2 * logm;
 
     uint64_t mul = a * b;
-    uint64_t tmp = mul >> (logm-1);
+
+    uint64_t tmp1 = mul;
+    uint64_t tmp2 = tmp1 >> (logm-2);
+
+    tmp1 = tmp2 * prec;
+    tmp2 = tmp1 >> (msb + 5);
+    tmp1 = tmp2 * m;
+
+    res = (mul - tmp1);
+
+    /*
+    uint64_t tmp = mul >> (logm-2);
     tmp *= prec;
-    tmp >>= (logm + 1);
+    tmp >>= (logm + 5);
 
     tmp *= m;
     res = (mul - tmp) & ( (1 << (logm + 1)) - 1 ); // mod 2 ^(logm + 1)
-    
+    */
+
     while (res >= m) res -= m;
 
     return res;
