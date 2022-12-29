@@ -1,2 +1,2 @@
 mkdir build
-g++ main.cpp src/lib/math.cpp -o build/test 
+g++ -std=c++11 main.cpp src/lib/math.cpp src/lib/poly.cpp -o build/test 

@@ -3,7 +3,16 @@
 #include <iostream>
 using namespace std;
 
-uint64_t ModAdd(uint64_t a, uint64_t b, uint64_t m) {
+uint64_t MSB(uint64_t t) {
+    uint64_t msb = 0;
+    while (t > 0) {
+        msb++;
+        t >>= 1;
+    }
+    return msb;
+}
+
+uint64_t ModAdd(const uint64_t a, const uint64_t b, const uint64_t m) {
     uint64_t c = a + b;
     return (c >= m) ? c - m : c;
 }
