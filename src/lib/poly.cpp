@@ -67,7 +67,7 @@ Poly& Poly::operator=(Poly &&o) {
 uint64_t Poly::operator()(uint64_t x) const {
     uint64_t res = ax[0];
     uint64_t xpow = x;
-    uint pr = ShoupPrecompute(x, m);
+    uint64_t pr = ShoupPrecompute(x, m);
     for (size_t i = 1; i < N; i++) {
         res = ModAdd(res, ModMultBarrett(ax[i], xpow, m, mu, logm), m);
         xpow = ModMulShoup(xpow, x, m, logm);
