@@ -17,6 +17,11 @@ uint64_t ModAdd(const uint64_t a, const uint64_t b, const uint64_t m) {
     return (c >= m) ? c - m : c;
 }
 
+void ModAddEq(uint64_t &a, const uint64_t b, const uint64_t m) {
+    a += b;
+    (a >= m) ? a - m : a;
+}
+
 //*
 // https://core.ac.uk/download/pdf/287482281.pdf
 uint64_t BarrettPrecompute(uint64_t m, uint64_t logm) {

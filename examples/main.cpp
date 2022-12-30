@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "math.h"
-#include "poly.h"
+#include "polynomial.h"
 
 using namespace std;
 
@@ -37,7 +37,7 @@ int main(int argc, char const *argv[])
     cout << "a * b mod m = " << ModMulShoup(a, b, m, s) << endl;
 
 
-    Poly poly(8, 11);
+    Polynomial poly(8, 11);
 
     uint64_t sum = 0;
     for (size_t i = 0; i < 8; i++) {
@@ -53,13 +53,13 @@ int main(int argc, char const *argv[])
     cout << poly(0) << endl;
     cout << poly(3) << endl;
 
-    Poly poly1(8, 11);
+    Polynomial poly1(8, 11);
     for (size_t i = 0; i < 8; i++) {
         poly1[i] = (i*i) % 11;
     }
     cout << "B(x) = "  << poly1 << endl;
 
-    Poly poly2;
+    Polynomial poly2;
     poly2 = poly + poly1;
 
     cout << "A(x) + B(x) = " << poly2 << endl;
