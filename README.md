@@ -10,7 +10,7 @@ make
 
 # How to compile and run on Windows
 
-Download and install MSYS2 using default settings. Start the MSYS2 MINGW 64-bit shell and execute the following command
+Download and install MSYS2 (https://www.msys2.org/) using default settings. Start the MSYS2 MINGW 64-bit shell and execute the following command
 ```
 pacman -Syu
 ```
