@@ -89,7 +89,7 @@ ostream& operator<<(ostream& os, const Polynomial& Polynomial) {
 }
 
 const Polynomial& operator+=(Polynomial& left, const Polynomial& right) {
-    if (left.GetN() != right.GetN() || left.GetModulus() != right.GetModulus())
+    if (left.m != right.m || left.m != right.m)
         return left;
     ModAdd(left.ax, right.ax, left.N, left.m);
     return left;
@@ -99,3 +99,19 @@ const Polynomial operator+(const Polynomial& left, const Polynomial& right) {
     Polynomial res(left);
     return (res += right);
 }
+
+const Polynomial operator*(const Polynomial& left, const Polynomial& right) {
+    Polynomial res(left);
+    NaiveNegacyclicConvolution(res.ax, left.ax, right.ax, res.N, res.m, res.mu, res.logm);
+    return res;
+}
+
+const Polynomial& operator*=(Polynomial& left, const Polynomial& right) {
+    uint64_t *temp = new uint64_t[left.N];
+    NaiveNegacyclicConvolution(temp, left.ax, right.ax, left.N, left.m, left.mu, left.logm);
+    move(temp, temp + left.N, left.ax);
+    delete [] temp;
+    return left;
+}
+
+

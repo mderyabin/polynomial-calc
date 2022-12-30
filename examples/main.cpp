@@ -1,6 +1,5 @@
 #include <iostream>
 
-#include "math.h"
 #include "polynomial.h"
 
 using namespace std;
@@ -47,11 +46,11 @@ int main(int argc, char const *argv[])
 
     cout << "A(x) = " << poly << endl;
 
-    cout << poly(1) << endl;
-    cout << sum % poly.GetModulus() << endl;
+    cout << "A(0) = " << poly(1) << endl;
+    cout << "check " << sum % poly.GetModulus() << endl;
 
-    cout << poly(0) << endl;
-    cout << poly(3) << endl;
+    cout << "A(0) = " << poly(0) << endl;
+    cout << "A(3) = " << poly(3) << endl;
 
     Polynomial poly1(8, 11);
     for (size_t i = 0; i < 8; i++) {
@@ -63,6 +62,11 @@ int main(int argc, char const *argv[])
     poly2 = poly + poly1;
 
     cout << "A(x) + B(x) = " << poly2 << endl;
+
+    Polynomial poly3;
+    poly3 = poly * poly1;
+
+    cout << "A(x) * B(x) mod (X^"<< poly.GetN() <<" + 1) = " << poly3 << endl;
     
     return 0;
 }

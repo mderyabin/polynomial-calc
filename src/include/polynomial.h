@@ -46,6 +46,9 @@ public:
     friend const Polynomial operator+(const Polynomial& left, const Polynomial& right);
     friend const Polynomial& operator+=(Polynomial& left, const Polynomial& right);
     friend const Polynomial& operator+(const Polynomial& Polynomial) {return Polynomial; }
+
+    friend const Polynomial operator*(const Polynomial& left, const Polynomial& right);
+    friend const Polynomial& operator*=(Polynomial& left, const Polynomial& right);
 };
 
 #endif /* __POLYNOMIAL_H__ */
