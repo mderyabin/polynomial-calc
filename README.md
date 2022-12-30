@@ -25,12 +25,12 @@ Clone the repo. Create a directory where the binaries will be built. The typical
 ```
 mkdir build
 cd build
-cmake ..
+cmake .. -G"Unix Makefiles"
 ```
 Build the program using command and run example
 ```
 make
-./bin/main
+./bin/main.exe
 ```
 # How to compile and run on MacOS
 
