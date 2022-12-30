@@ -1,7 +1,7 @@
 #include <iostream>
 
-#include "src/include/math.h"
-#include "src/include/poly.h"
+#include "math.h"
+#include "poly.h"
 
 using namespace std;
 

@@ -1,4 +1,4 @@
-#include "../include/poly.h"
+#include "poly.h"
 
 #include <algorithm>
 
