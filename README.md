@@ -32,3 +32,21 @@ Build the program using command and run example
 make
 ./bin/main
 ```
+# How to compile and run on MacOS
+
+Install the Mac terminal command line functions if needed (type git at the command line to trigger the install). Then install home-brew if not already present:
+```
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install.sh)"
+```
+Install pre-requisites cmake library using Homebrew:
+```
+brew install cmake
+```
+Compile and run using dollowing commands (from the project directory)
+```
+mkdir build
+cd build
+cmake ..
+make 
+./bin/main
+```
