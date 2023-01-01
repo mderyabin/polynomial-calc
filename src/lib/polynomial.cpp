@@ -80,21 +80,21 @@ ostream& operator<<(ostream& os, const Polynomial& Polynomial) {
     size_t N = Polynomial.GetN();
 	uint64_t *ax = Polynomial.ax;
     
-	size_t i = 0;
-	while (i < N && ax[i] == 0) i++;
-    if (N >=1 && i < N) {
-		os << ax[0];
-		if (i != 0) os << "X^" << i; 
-		for (; i < N; i++) {
-			if (ax[i] != 0) 
-				os << " + " << a << "X^" << i;
+	bool printplus = false;
+	//while (i < N && ax[i] == 0) i++;
+    if (N >=1 ) {
+		for (size_t i = 0; i < N; i++) {
+			if (ax[i] != 0) {
+				if (printplus) os << " + ";
+                else printplus = true;
+                if (ax[i] != 1 || i == 0) os << ax[i]; 
+				if (i != 0) os << "X^" << i;
+            }
 	    }
     } else {
 		os << 0;
     }
 
-    
-    
     return os;
 }
 

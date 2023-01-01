@@ -28,8 +28,8 @@ int main(int argc, char const *argv[])
     cout << "A(3) = " << poly(3) << endl;
 
     Polynomial poly1(N, m);
-    for (size_t i = 0; i < 8; i++) {
-        poly1[i] = (i*i) % 11;
+    for (size_t i = 0; i < N; i++) {
+        poly1[i] = (i*i) % m;
     }
     cout << "B(x) = "  << poly1 << endl;
 
