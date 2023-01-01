@@ -6,17 +6,17 @@ using namespace std;
 
 int main(int argc, char const *argv[])
 {
-    uint64_t m = 17;
-    uint64_t logm = MSB(m);
-    uint64_t a = 9;
-    uint64_t b = 11;
+    // uint64_t m = 17;
+    // uint64_t logm = MSB(m);
+    // uint64_t a = 9;
+    // uint64_t b = 11;
 
 
 //пример больших чисел для большого умножения...
-    // uint64_t m = 4294967311;
-    // uint64_t logm = MSB(m);
-    // uint64_t a = 4294967311 - 8239042;
-    // uint64_t b = 4294967311 - 23984778;
+    uint64_t m = 4294967311;
+    uint64_t logm = MSB(m);
+    uint64_t a = 4294967311 - 8239042;
+    uint64_t b = 4294967311 - 23984778;
 
 
     cout << "a = " << a << endl;
