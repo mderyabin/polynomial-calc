@@ -78,12 +78,22 @@ uint64_t Polynomial::operator()(uint64_t x) const {
 
 ostream& operator<<(ostream& os, const Polynomial& Polynomial) {
     size_t N = Polynomial.GetN();
+	uint64_t *ax = Polynomial.ax;
     
-    if (N >=1) os << Polynomial.ax[0];
-
-    for (size_t i = 1; i < N; i++) {
-        os << " + " << Polynomial.ax[i] << "X^" << i;
+	size_t i = 0;
+	while (i < N && ax[i] == 0) i++;
+    if (N >=1 && i < N) {
+		os << ax[0];
+		if (i != 0) os << "X^" << i; 
+		for (; i < N; i++) {
+			if (ax[i] != 0) 
+				os << " + " << a << "X^" << i;
+	    }
+    } else {
+		os << 0;
     }
+
+    
     
     return os;
 }
