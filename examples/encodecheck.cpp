@@ -11,6 +11,7 @@ using namespace std;
 int main(int argc, char const *argv[]) {
     uint64_t m = 2048;
     size_t N = 4;
+    uint64_t scale = 128;
 
     vector<complex<long double>> a(2);
     a[0] = complex<long double>(3.0,  4.0);
@@ -20,11 +21,12 @@ int main(int argc, char const *argv[]) {
     for (size_t i = 0; i < a.size(); i++)
         cout << a[i] << " ";
     cout << endl;
-    Polynomial r = encode(a, N, m, 128);
+    Polynomial r = encode(a, N, m, scale);
 
+    cout << "encoded polynomial: ";
     cout << r << endl;
 
-    vector<complex<long double>> b = decode(r, 128);
+    vector<complex<long double>> b = decode(r, scale);
 
     cout << "input after decode: ";
     for (size_t i = 0; i < b.size(); i++)

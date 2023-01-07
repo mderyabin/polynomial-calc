@@ -68,6 +68,7 @@ cvector ComplexRootsOfUnity(size_t N) {
     return domain;
 }
 
+// example can be found in https://eprint.iacr.org/2016/421.pdf (section 3.2)
 Polynomial encode(cvector values, size_t N, uint64_t m, uint64_t scale) {
     Polynomial result(N, m, true); 
 
@@ -106,12 +107,6 @@ Polynomial encode(cvector values, size_t N, uint64_t m, uint64_t scale) {
         lagrange = polyadd(lagrange, tmp);
     }
 
-    cout << "lagrange: ";
-    for (size_t i = 0; i < lagrange.size(); i++) {
-        cout << lagrange[i] << "X^" << i << " + ";
-    }
-    cout << endl;
-
     long double s = static_cast<long double>(scale);
     for (size_t i = 0; i < N; i++) {
         long double a = round(s * lagrange[i].real());
@@ -141,13 +136,6 @@ cvector decode(Polynomial poly, uint64_t scale) {
         a /= ds;
         cpoly[i].real(a);
     }
-
-    cout << "during decoding: ";
-    for (size_t i = 0; i < cpoly.size(); i++) {
-        cout << cpoly[i] << "X^" << i << " + ";
-    }
-    cout << endl;
-    
     
     for (size_t i = 0; i < N/2; i++) {
         result[i] = polyval(cpoly, domain[i]);
