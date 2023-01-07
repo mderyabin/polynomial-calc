@@ -1,8 +1,7 @@
-#ifndef __MATH_H__
-#define __MATH_H__
+#ifndef __NTMATH_H__
+#define __NTMATH_H__
 
-#include <cstdint>
-#include <cstddef>
+#include <cstdlib>
 
 uint64_t MSB(uint64_t t);
 
@@ -23,4 +22,4 @@ uint64_t ModMulShoup(uint64_t a, uint64_t c, uint64_t m, uint64_t prec);
 
 
 
-#endif /* __MATH_H__ */
+#endif /* __NTMATH_H__ */

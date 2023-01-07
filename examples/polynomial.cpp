@@ -48,6 +48,12 @@ int main(int argc, char const *argv[])
 	
 	cout << "D(X) = " << monomial << endl;
 	cout << "A(X) * D(X) = " << poly * monomial << endl;
+
+    Polynomial monomial1(N, m, true);
+    monomial1[6] = m-1;
+	
+	cout << "D(X) = " << monomial1 << endl;
+	cout << "A(X) * D(X) = " << (poly * monomial)*monomial1 << endl;
 	
 	
     return 0;

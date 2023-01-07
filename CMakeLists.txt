@@ -9,10 +9,6 @@ set(CMAKE_RUNTIME_OUTPUT_DERICTORY ${CMAKE_BINARY_DIR}/bin)
 
 add_subdirectory(src)
 
-# add_executable(polycalc main.cpp)
-
-# targer_link_libtlraries(polycalc PUBLIC polymath)
-
 file (GLOB EXAMPLES_SRC_FILES CONFIGURE_DEPENDS examples/*.cpp)
 foreach (app ${EXAMPLES_SRC_FILES})
     get_filename_component ( exe ${app} NAME_WE )

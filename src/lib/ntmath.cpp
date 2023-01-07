@@ -1,4 +1,4 @@
-#include "math.h"
+#include "ntmath.h"
 
 #include <iostream>
 using namespace std;
