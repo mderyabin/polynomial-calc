@@ -330,7 +330,6 @@ vector<uint64_t> Factorize(uint64_t a) {
             }
         }
     }
-    
 
     while (!IsPrime(a)) {
         uint64_t b = RhoPollard(a);
@@ -348,4 +347,63 @@ vector<uint64_t> Factorize(uint64_t a) {
     sort(res.begin(), res.end());
 
     return res;   
+}
+
+unordered_set<uint64_t> FindPrimefactors(uint64_t m) {
+    unordered_set<uint64_t> res;
+    vector<uint64_t> fact = Factorize(m);
+    for (size_t i = 0; i < fact.size(); i++)
+        res.insert(fact[i]);
+    return res;
+}
+
+// Function to find smallest primitive root of n
+uint64_t FindPrimitive(uint64_t n)
+{
+    unordered_set<uint64_t> s;
+ 
+    // Check if n is prime or not
+    if (!IsPrime(n))
+        return 0;
+ 
+    // Find value of Euler Totient function of n
+    // Since n is a prime number, the value of Euler
+    // Totient function is n-1 as there are n-1
+    // relatively prime numbers.
+    uint64_t phi = n-1;
+ 
+    // Find prime factors of phi and store in a set
+    s = FindPrimefactors(phi);
+
+    uint64_t logn = MSB(n);
+    uint64_t prec = BarrettPrecompute(n, logn);
+ 
+    // Check for every number from 2 to phi
+    for (int r=2; r<=phi; r++) {
+        // Iterate through all prime factors of phi.
+        // and check if we found a power with value 1
+        bool flag = false;
+        for (auto it = s.begin(); it != s.end(); it++) {
+ 
+            // Check if r^((phi)/primefactors) mod n
+            // is 1 or not
+            if (ModExp(r, phi/(*it), n, prec, logn) == 1) {
+                flag = true;
+                break;
+            }
+         }
+ 
+         // If there was no power with value 1.
+         if (flag == false)
+           return r;
+    }
+ 
+    // If no primitive root found
+    return -1;
+}
+
+uint64_t FindGenerator(uint64_t m, size_t M) {
+    uint64_t g0 = FindPrimitive(m);
+    uint64_t g = ModExp(g0, (m - 1)/M, m);
+    return g;
 }

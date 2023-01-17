@@ -6,7 +6,7 @@ using namespace std;
 
 int main(int argc, char const *argv[]) {
     size_t logN = 11;
-    size_t logm = 50;
+    size_t logm = 58;
     size_t N = 1 << logN;
     size_t M = N << 1;
 
@@ -48,6 +48,17 @@ int main(int argc, char const *argv[]) {
     }
     cout << endl;
     
+    uint64_t g = FindPrimitive(m);
+    uint64_t gM = FindGenerator(m, M);
+    cout << "m = " << m << endl;
+    cout << "g = " << g << endl;
+    cout << "gM = " << gM << endl;
+
+    cout << "g^phi(m) = " << ModExp(g, m - 1, m) << endl;
+
+    for (size_t i = 1; i <= M; i<<=1) {
+        cout << "gM^(" << i << ") = " << ModExp(gM, i, m) << endl;
+    }
 
     return 0;
 }

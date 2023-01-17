@@ -3,6 +3,7 @@
 
 #include <cstdlib>
 #include <vector>
+#include <unordered_set>
 
 uint64_t MSB(uint64_t t);
 
@@ -38,5 +39,8 @@ uint64_t GCD(uint64_t a, uint64_t b);
 uint64_t RhoPollard(uint64_t a);
 
 std::vector<uint64_t> Factorize(uint64_t a);
+
+uint64_t FindPrimitive(uint64_t n);
+uint64_t FindGenerator(uint64_t m, size_t M);
 
 #endif /* __NTMATH_H__ */
