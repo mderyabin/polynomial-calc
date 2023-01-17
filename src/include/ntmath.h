@@ -2,6 +2,7 @@
 #define __NTMATH_H__
 
 #include <cstdlib>
+#include <vector>
 
 uint64_t MSB(uint64_t t);
 
@@ -31,5 +32,11 @@ uint64_t FindFirstPrimeUp(size_t logm, size_t M); // find prime in form m = (2^l
 
 uint64_t FindPrevPrime(uint64_t m, size_t M); // find previous prime in form m1 = m - k*M
 uint64_t FindNextPrime(uint64_t m, size_t M); // find next prime in form m = m + k*M
+
+uint64_t GCD(uint64_t a, uint64_t b);
+
+uint64_t RhoPollard(uint64_t a);
+
+std::vector<uint64_t> Factorize(uint64_t a);
 
 #endif /* __NTMATH_H__ */

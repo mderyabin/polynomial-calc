@@ -6,7 +6,7 @@ using namespace std;
 
 int main(int argc, char const *argv[]) {
     size_t logN = 11;
-    size_t logm = 40;
+    size_t logm = 50;
     size_t N = 1 << logN;
     size_t M = N << 1;
 
@@ -20,6 +20,34 @@ int main(int argc, char const *argv[]) {
 
     m = FindPrevPrime(m, M);
     cout << "m[2] = " << m << endl;
+
+
+    uint64_t a = (uint64_t(1L) << logm) - 1;
+
+    cout << "a = " << a << endl;
+    uint64_t b = RhoPollard(a);
+    cout << "b = " << b << endl;
+
+    vector<uint64_t> fact = Factorize(a);
+
+    cout << "factorize(a) = ";
+    uint64_t check_a = 1;
+    for (size_t i = 0; i < fact.size(); i++) {
+        cout << fact[i] << " ";
+        check_a *= fact[i];
+    }
+    cout << endl;
+    cout << "check_a = " << check_a << endl;
+
+    vector<uint64_t> factprime = Factorize(m);
+
+    cout << "m = " << m << endl;
+    cout << "factorize(m) = ";
+    for (size_t i = 0; i < factprime.size(); i++) {
+        cout << factprime[i] << " ";
+    }
+    cout << endl;
+    
 
     return 0;
 }
