@@ -28,6 +28,9 @@ public:
     // destructor
     ~Polynomial() { if (ax) delete [] ax; }
 
+    // fill polynomial
+    
+
     // get parameters
     size_t GetN() const { return N; }
     uint64_t GetModulus() const { return m; }

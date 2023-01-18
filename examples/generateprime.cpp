@@ -5,8 +5,8 @@
 using namespace std;
 
 int main(int argc, char const *argv[]) {
-    size_t logN = 11;
-    size_t logm = 58;
+    size_t logN = 10;
+    size_t logm = 20;
     size_t N = 1 << logN;
     size_t M = N << 1;
 
@@ -59,6 +59,12 @@ int main(int argc, char const *argv[]) {
     for (size_t i = 1; i <= M; i<<=1) {
         cout << "gM^(" << i << ") = " << ModExp(gM, i, m) << endl;
     }
+
+    uint64_t gMinv = ModInvPrime(gM, m);
+
+    cout << "gM^-1 = " << gMinv << endl;
+
+    cout << "gM * gM^-1 = " << ModMult(gM, gMinv, m) << endl;
 
     return 0;
 }

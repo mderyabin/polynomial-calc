@@ -6,8 +6,8 @@ using namespace std;
 
 typedef unsigned __int128 uint128_t;
 
-uint64_t MSB(uint64_t t) {
-    uint64_t msb = 0;
+size_t MSB(uint64_t t) {
+    size_t msb = 0;
     while (t > 0) {
         msb++;
         t >>= 1;
@@ -33,14 +33,26 @@ void ModSubEq(uint64_t &a, const uint64_t b, const uint64_t m) {
     a = (a > b) ? a - b : m + a - b;
 }
 
+uint64_t ModMult(uint64_t a, uint64_t b, uint64_t m) {
+    size_t logm = MSB(m);
+    uint64_t prec = BarrettPrecompute(m, logm);
+    return ModMultBarrett(a, b, m, prec, logm);
+}
+
+void ModMultEq(uint64_t &a, uint64_t b, uint64_t m) {
+    size_t logm = MSB(m);
+    uint64_t prec = BarrettPrecompute(m, logm);
+    ModMultBarrettEq(a, b, m, prec, logm);
+}
+
 //*
 // https://core.ac.uk/download/pdf/287482281.pdf
-uint64_t BarrettPrecompute(uint64_t m, uint64_t logm) {
+uint64_t BarrettPrecompute(uint64_t m, size_t logm) {
     uint64_t bar = 2 * logm + 3;
     return (static_cast<uint128_t>(1) << bar) / m;
 }
 
-uint64_t ModMultBarrett(uint64_t a, uint64_t b, uint64_t m, uint64_t prec, uint64_t logm) {
+uint64_t ModMultBarrett(uint64_t a, uint64_t b, uint64_t m, uint64_t prec, size_t logm) {
     uint64_t res;
     //int64_t bar = 2 * logm;
 
@@ -61,7 +73,10 @@ uint64_t ModMultBarrett(uint64_t a, uint64_t b, uint64_t m, uint64_t prec, uint6
 }
 
 
-void ModMultBarrettEq(uint64_t &a, uint64_t b, uint64_t m, uint64_t prec, uint64_t logm) {
+void ModMultBarrettEq(uint64_t &a, uint64_t b, uint64_t m, uint64_t prec, size_t logm) {
+
+    if (logm == 0) logm = MSB(m);
+    if (prec == 0) prec = BarrettPrecompute(m, logm);
 
     uint128_t mul = static_cast<uint128_t>(a) * b;
 
@@ -136,7 +151,6 @@ uint64_t ModMulShoup(uint64_t a, uint64_t c, uint64_t m, uint64_t prec) {
 }
 
 void ModMulShoupEq(uint64_t &a, uint64_t c, uint64_t m, uint64_t prec) {
-   
     uint128_t aa  = static_cast<uint128_t>(a);
     uint128_t mul = aa * c;
     uint128_t tmp = ((aa * prec) >> 64) * m;
@@ -147,7 +161,7 @@ void ModMulShoupEq(uint64_t &a, uint64_t c, uint64_t m, uint64_t prec) {
 }
 
 
-uint64_t ModExp(uint64_t a, uint64_t e, uint64_t m, uint64_t prec, uint64_t logm) {
+uint64_t ModExp(uint64_t a, uint64_t e, uint64_t m, uint64_t prec, size_t logm) {
     if (e == 0) return 1;
     if (e == 1) return a;
 
@@ -192,7 +206,7 @@ bool IsPrime(uint64_t m, size_t iters) {
         s += 1;
     }
 
-    uint64_t logm = MSB(m);
+    size_t logm = MSB(m);
     uint64_t prec = BarrettPrecompute(m, logm);
 
     // повторить k раз
@@ -286,7 +300,7 @@ uint64_t RhoPollard(uint64_t a) {
     uint64_t i = 0;
     uint64_t stage = 2;
 
-    uint64_t loga = MSB(a);
+    size_t loga = MSB(a);
     uint64_t prec = BarrettPrecompute(a, loga);
 
     while (GCD(a, abssub(x, y)) == 1) {
@@ -329,9 +343,10 @@ vector<uint64_t> Factorize(uint64_t a) {
                 flag = false;
             }
         }
+        if (a == 1) return res;
     }
 
-    while (!IsPrime(a)) {
+    while (!IsPrime(a) && a != 1) {
         uint64_t b = RhoPollard(a);
         if (IsPrime(b)) 
             res.push_back(b);
@@ -375,7 +390,7 @@ uint64_t FindPrimitive(uint64_t n)
     // Find prime factors of phi and store in a set
     s = FindPrimefactors(phi);
 
-    uint64_t logn = MSB(n);
+    size_t logn = MSB(n);
     uint64_t prec = BarrettPrecompute(n, logn);
  
     // Check for every number from 2 to phi
@@ -399,11 +414,15 @@ uint64_t FindPrimitive(uint64_t n)
     }
  
     // If no primitive root found
-    return -1;
+    return 0;
 }
 
 uint64_t FindGenerator(uint64_t m, size_t M) {
     uint64_t g0 = FindPrimitive(m);
     uint64_t g = ModExp(g0, (m - 1)/M, m);
     return g;
+}
+
+uint64_t ModInvPrime(uint64_t a, uint64_t m) {
+    return ModExp(a, m-2, m);
 }

@@ -65,15 +65,7 @@ Polynomial& Polynomial::operator=(Polynomial &&o) {
 }
 
 uint64_t Polynomial::operator()(uint64_t x) const {
-    uint64_t res = ax[0];
-    uint64_t xpow = x;
-    uint64_t pr = ShoupPrecompute(x, m);
-    for (size_t i = 1; i < N; i++) {
-        res = ModAdd(res, ModMultBarrett(ax[i], xpow, m, mu, logm), m);
-        xpow = ModMulShoup(xpow, x, m, logm);
-    }
-    
-    return res;
+    return ComputeValue(x, ax, N, m);
 }
 
 ostream& operator<<(ostream& os, const Polynomial& Polynomial) {
