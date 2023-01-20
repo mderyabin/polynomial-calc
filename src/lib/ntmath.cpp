@@ -26,11 +26,11 @@ void ModAddEq(uint64_t &a, const uint64_t b, const uint64_t m) {
 }
 
 uint64_t ModSub(const uint64_t a, const uint64_t b, const uint64_t m) {
-    return (a > b) ? a - b : m + a - b;
+    return (a >= b) ? a - b : m + a - b;
 }
 
 void ModSubEq(uint64_t &a, const uint64_t b, const uint64_t m) {
-    a = (a > b) ? a - b : m + a - b;
+    a = (a >= b) ? a - b : m + a - b;
 }
 
 uint64_t ModMult(uint64_t a, uint64_t b, uint64_t m) {

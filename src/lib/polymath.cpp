@@ -1,5 +1,6 @@
 #include <iostream>
 #include <random>
+#include <algorithm>
 
 #include "polymath.h"
 
@@ -84,7 +85,7 @@ size_t ReverseBits(size_t number, size_t bit_length) {
     return reversed;
 }
 
-void ComuteTwiddleFactors(uint64_t *tf, size_t N, uint64_t m, bool isinverse) {
+void ComputeTwiddleFactors(uint64_t *tf, size_t N, uint64_t m, bool isinverse, bool tobitrev) {
     uint64_t g = FindGenerator(m, N << 1);
 
     if (isinverse) 
@@ -94,6 +95,8 @@ void ComuteTwiddleFactors(uint64_t *tf, size_t N, uint64_t m, bool isinverse) {
     size_t logN = MSB(N) - 1;
 
     uint64_t gg = ModMult(g, g, m);
+    if (tobitrev) gg = ModMult(gg, g, m);
+    //std::cout << "GG = " << gg << " isinverse = " << isinverse << std::endl;
     uint64_t prec = ShoupPrecompute(gg, m);
 
     tf_direct[0] = 1;
@@ -101,58 +104,120 @@ void ComuteTwiddleFactors(uint64_t *tf, size_t N, uint64_t m, bool isinverse) {
         tf_direct[i] = ModMulShoup(tf_direct[i-1], gg, m, prec);
     }
 
-    for (size_t i = 0; i < N; i++) {
-        //tf[i] = tf_direct[ReverseBits(i, logN)];
-        tf[i] = tf_direct[i];
+    if (tobitrev) {
+        for (size_t i = 0; i < N; i++) {
+            tf[i] = tf_direct[ReverseBits(i, logN)];
+        }
+    } else {
+        for (size_t i = 0; i < N; i++) {
+            tf[i] = tf_direct[i];
+        }
     }
     
     delete [] tf_direct;
 }
 
-void NWC(uint64_t *res, const uint64_t *ax, size_t N, uint64_t m) {
-    uint64_t g = FindGenerator(m, N << 1);
+void ComputeNWCSequence(uint64_t *pows, size_t N, uint64_t m, bool isinverse) {
+    uint64_t g = FindGenerator(m, 2*N);
+    if (isinverse) g = ModInvPrime(g, m);
 
-    size_t logm = MSB(m);
-    uint64_t prec = BarrettPrecompute(m, logm);
+    uint64_t prec = ShoupPrecompute(g, m);
 
-    uint64_t t = 1;
-    for (size_t i = 0; i < N; i++) {
-        res[i] = ModMultBarrett(ax[i], t, m, prec, logm);
-        ModMultBarrettEq(t, g, m, prec, logm);
+    pows[0] = 1;
+    for (size_t i = 1; i < N; i++) {
+        pows[i] = ModMulShoup(pows[i-1], g, m, prec);
     }
 }
 
-void iNWC(uint64_t *res, const uint64_t *ax, size_t N, uint64_t m) {
-    uint64_t g = FindGenerator(m, N << 1);
-    g = ModInvPrime(g, m);
-
+void NWC(uint64_t *res, const uint64_t *ax, const uint64_t *pows, size_t N, uint64_t m) {
     size_t logm = MSB(m);
     uint64_t prec = BarrettPrecompute(m, logm);
 
-    uint64_t t = 1;
-    for (size_t i = 0; i < N; i++) {
-        res[i] = ModMultBarrett(ax[i], t, m, prec, logm);
-        ModMultBarrettEq(t, g, m, prec, logm);
+    for (size_t i = 1; i < N; i++) {
+        res[i] = ModMultBarrett(ax[i], pows[i], m, prec, logm);
     }
 }
 
-void NaiveNTT(uint64_t *res, const uint64_t *ax, const uint64_t *tf, size_t N, uint64_t m) {
+void iNWC(uint64_t *res, const uint64_t *ax, const uint64_t *ipows, size_t N, uint64_t m) {
+    size_t logm = MSB(m);
+    uint64_t prec = BarrettPrecompute(m, logm);
+
+    for (size_t i = 1; i < N; i++) {
+        res[i] = ModMultBarrett(ax[i], ipows[i], m, prec, logm);
+    }
+}
+
+void NaiveNTT(uint64_t *res, const uint64_t *ax, const uint64_t *tf, const uint64_t *pows, size_t N, uint64_t m) {
     uint64_t *tx = new uint64_t[N];
-    NWC(tx, ax, N, m);
+    NWC(tx, ax, pows, N, m);
     for (size_t i = 0; i < N; i++) {
         res[i] = ComputeValue(tf[i], tx, N, m);
     }
     delete [] tx;
 }
 
-void NaiveInvNTT(uint64_t *res, const uint64_t *ax, const uint64_t *tf, size_t N, uint64_t m) {
+void NaiveInvNTT(uint64_t *res, const uint64_t *ax, const uint64_t *itf, const uint64_t *ipows, size_t N, uint64_t m) {
     uint64_t *tx = new uint64_t[N];
     uint64_t invN = ModInvPrime(N, m);
     uint64_t prec = ShoupPrecompute(invN, m);
     for (size_t i = 0; i < N; i++) {
-        tx[i] = ComputeValue(tf[i], ax, N, m);
+        tx[i] = ComputeValue(itf[i], ax, N, m);
         ModMulShoupEq(tx[i], invN, m, prec);
     }
-    iNWC(res, tx, N, m);
+    iNWC(res, tx, ipows, N, m);
     delete [] tx;
+}
+
+void CooleyTukeyForwardNTT(uint64_t *ax, const uint64_t *tf, size_t N, uint64_t m) {
+    size_t logm = MSB(m);
+    uint64_t prec = BarrettPrecompute(m, logm);
+
+    size_t t = N;
+    for (size_t n = 1; n < N; n <<= 1) {
+        t >>= 1;
+        for (size_t i = 0; i < n; i++) {
+            size_t j1 = 2 * i * t;
+            size_t j2 = j1 + t - 1;
+            uint64_t s = tf[n + i]; 
+            for (size_t j = j1; j <= j2; j++) {
+                uint64_t u = ax[j];
+                uint64_t v = ModMultBarrett(ax[j + t], s, m, prec, logm);
+                ax[j] = ModAdd(u, v, m);
+                ax[j + t] = ModSub(u, v, m);
+            }   
+        }
+    }
+}
+
+
+void GentlemanSandeInverseNTT(uint64_t *ax, const uint64_t *itf, size_t N, uint64_t m) {
+    uint64_t invN = ModInvPrime(N, m);
+
+    uint64_t prec_s = ShoupPrecompute(invN, m);
+
+    size_t logm = MSB(m);
+    uint64_t prec_b = BarrettPrecompute(m, logm);
+
+    size_t t = 1;
+
+    for (size_t h = N>>1; h > 0; h >>= 1) {
+        size_t j1 = 0;
+        for (size_t i = 0; i < h; i++) {
+            size_t j2 = j1 + t - 1;
+            uint64_t s = itf[h + i]; 
+            for (size_t j = j1; j <= j2; j++) {
+                uint64_t u = ax[j];
+                uint64_t v = ax[j + t];
+                ax[j] = ModAdd(u, v, m);
+                ax[j + t] = ModSub(u, v, m);
+                ModMultBarrettEq(ax[j + t], s, m, prec_b, logm);
+            }
+            j1 += (t<<1);
+        }
+        t <<= 1;
+    }
+
+    for (size_t j = 0; j < N; j++) {
+        ModMulShoupEq(ax[j], invN, m, prec_s);
+    }
 }
