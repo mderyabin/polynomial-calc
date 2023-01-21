@@ -1,3 +1,11 @@
+Library for work and experiment with polynomials for homomorphic encryption. 
+
+Implementation of polynomial operations is in the file `polymath.h` and it is separated from class `Polynomial` from `polynomial.h`. 
+Class `Polynomial` is created for convenient work with polynomials and to hide the details of operations. 
+This way is allowing to separate and analyze algorithms separately. All necessary mathematical operations are collected in `ntmath.h`.
+
+NTT operations are mirrored in `NTT` class for convenience. Helper class `NTTManager` ensures that only a single copy of `NTT` class for particular pair of parameters `N` and `m` exist.
+
 # How to compile and run
 
 ```
