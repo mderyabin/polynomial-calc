@@ -38,6 +38,11 @@ int main(int argc, char const *argv[]) {
     uint64_t m = FindFirstPrimeUp(logm, M);
     cout << "m = " << m << endl;
 
+    uint64_t prec = BarrettPrecompute(m, logm);
+
+    uint64_t invN = ModInvPrime(N, m);
+    uint64_t prec_invN = ShoupPrecompute(invN, m);
+
     uint64_t g = FindGenerator(m, M);
 
     cout << "g = " << g << endl;
@@ -70,19 +75,19 @@ int main(int argc, char const *argv[]) {
     NaiveNegacyclicConvolution(D, A, B, N, m);
     printpoly(D, N, "D = naive A*B");
 
-    CooleyTukeyForwardNTT(A, tf_br, N, m);
+    CooleyTukeyForwardNTT(A, tf_br, N, m, prec, logm);
     printvec(A, N, "NTT(A)");
 
-    CooleyTukeyForwardNTT(B, tf_br, N, m);
+    CooleyTukeyForwardNTT(B, tf_br, N, m, prec, logm);
     printvec(B, N, "NTT(B)");
 
     ModHadamardMul(C, A, B, N, m);
     printvec(C, N, "NTT(C) = NTT(A) * NTT(B)");
 
-    GentlemanSandeInverseNTT(C, itf_br, N, m);
+    GentlemanSandeInverseNTT(C, itf_br, N, m, invN, prec, prec_invN, logm);
     printpoly(C, N, "C = iNTT(NTT(C))");
 
-    CooleyTukeyForwardNTT(D, tf_br, N, m);
+    CooleyTukeyForwardNTT(D, tf_br, N, m, prec, logm);
     printvec(D, N, "NTT(D)"); 
 
     delete [] C;

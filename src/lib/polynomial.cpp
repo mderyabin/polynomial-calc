@@ -4,7 +4,7 @@
 
 using namespace std;
 
-Polynomial::Polynomial(size_t _N, uint64_t _m, bool initWithZeros) : N(_N), m(_m) {
+Polynomial::Polynomial(size_t _N, uint64_t _m, bool initWithZeros, Format _format) : N(_N), m(_m), format(_format) {
     ax = new uint64_t[N];
     if (initWithZeros) {
         for (size_t i = 0; i < N; i++) {
@@ -13,17 +13,22 @@ Polynomial::Polynomial(size_t _N, uint64_t _m, bool initWithZeros) : N(_N), m(_m
     }
     logm = MSB(m);
     mu = BarrettPrecompute(m, logm);
+
+    ntt = NTTManager::GetNTTPtr(N, m);
 }
 
-Polynomial::Polynomial(uint64_t *_ax, size_t _N, uint64_t _m) : N(_N), m(_m) {
+Polynomial::Polynomial(uint64_t *_ax, size_t _N, uint64_t _m, Format _format) : N(_N), m(_m), format(_format) {
     ax = new uint64_t[N];
     copy(_ax, _ax + N, ax);
     logm = MSB(m);
     mu = BarrettPrecompute(m, logm);
+
+    ntt = NTTManager::GetNTTPtr(N, m);
 }
 
-Polynomial::Polynomial(const Polynomial &o) : N(o.N), m(o.m), logm(o.logm), mu(o.mu) {
+Polynomial::Polynomial(const Polynomial &o) : N(o.N), m(o.m), logm(o.logm), mu(o.mu), format(o.format) {
     ax = new uint64_t[N];
+    ntt = o.ntt;
     copy(o.ax, o.ax + N, ax);
 }
 
@@ -32,13 +37,16 @@ Polynomial& Polynomial::operator=(const Polynomial &o) {
     m = o.m;
     logm = o.logm;
     mu = o.mu;
+    format = o.format;
     ax = new uint64_t[N];
+    ntt = o.ntt;
     copy(o.ax, o.ax + N, ax);
 
     return *this;
 }
 
-Polynomial::Polynomial(Polynomial &&o) : N(o.N), m(o.m), logm(o.logm), mu(o.mu) {
+Polynomial::Polynomial(Polynomial &&o) : N(o.N), m(o.m), logm(o.logm), mu(o.mu), format(o.format) {
+    ntt = o.ntt;
     move(o.ax, o.ax + N, ax);
 
     o.N = 0;
@@ -54,6 +62,8 @@ Polynomial& Polynomial::operator=(Polynomial &&o) {
     m = o.m;
     logm = o.logm;
     mu = o.mu;
+    format = o.format;
+    ntt = o.ntt;    // do not delete ntt! 
 
     o.N = 0;
     o.m = 0;
@@ -64,30 +74,69 @@ Polynomial& Polynomial::operator=(Polynomial &&o) {
     return *this;
 }
 
-uint64_t Polynomial::operator()(uint64_t x) const {
-    return ComputeValue(x, ax, N, m);
+void Polynomial::GenerateUniform(Format _format) {
+    format = _format;
+    GenerateUniformPoly(ax, N, m);  
 }
 
-ostream& operator<<(ostream& os, const Polynomial& Polynomial) {
-    size_t N = Polynomial.GetN();
-	uint64_t *ax = Polynomial.ax;
+uint64_t Polynomial::operator()(uint64_t x) const {
+    if (format == COEF)
+        return ComputeValue(x, ax, N, m);
+    else {
+        uint64_t *coeffs = new uint64_t[N]; 
+        copy(ax, ax + N, coeffs);
+
+        // todo: transform coeffs using INTT
+
+        uint64_t res = ComputeValue(x, coeffs, N, m);
+
+        delete [] coeffs;
+
+        return res;
+    } 
+}
+
+ostream& operator<<(ostream& os, const Polynomial& polynomial) {
+    size_t N = polynomial.GetN();
+	uint64_t *ax = polynomial.ax;
     
-	bool printplus = false;
-	//while (i < N && ax[i] == 0) i++;
-    if (N >=1 ) {
-		for (size_t i = 0; i < N; i++) {
-			if (ax[i] != 0) {
-				if (printplus) os << " + ";
-                else printplus = true;
-                if (ax[i] != 1 || i == 0) os << ax[i]; 
-				if (i != 0) os << "X^" << i;
+    if (polynomial.format == COEF) {
+        bool printplus = false;
+        if (N >=1 ) {
+            for (size_t i = 0; i < N; i++) {
+                if (ax[i] != 0) {
+                    if (printplus) os << " + ";
+                    else printplus = true;
+                    if (ax[i] != 1 || i == 0) os << ax[i]; 
+                    if (i != 0) os << "X^" << i;
+                }
             }
-	    }
+        } else {
+            os << 0;
+        }
     } else {
-		os << 0;
+        os << " [" << ax[0];
+        for (size_t i = 1; i < N; i++) {
+            os << ", " << ax[i];
+        }
+        os << "]";
     }
 
     return os;
+}
+
+void Polynomial::SetFormatEval() {
+    if (format == COEF) {
+        (*ntt).ComputeForward(ax);
+        format = EVAL;
+    }
+}
+
+void Polynomial::SetFormatCoef() {
+    if (format == EVAL) {
+        (*ntt).ComputeInverse(ax);
+        format = COEF;
+    }
 }
 
 const Polynomial& operator+=(Polynomial& left, const Polynomial& right) {
@@ -104,15 +153,25 @@ const Polynomial operator+(const Polynomial& left, const Polynomial& right) {
 
 const Polynomial operator*(const Polynomial& left, const Polynomial& right) {
     Polynomial res(left);
-    NaiveNegacyclicConvolution(res.ax, left.ax, right.ax, res.N, res.m, res.mu, res.logm);
+    if (left.format == COEF && right.format == COEF)
+        NaiveNegacyclicConvolution(res.ax, left.ax, right.ax, res.N, res.m, res.mu, res.logm);
+    else if (left.format == EVAL && right.format == EVAL)
+        ModHadamardMul(res.ax, right.ax, res.N, res.m, res.mu, res.logm);
+    else 
+        return res; // formats mismatched! todo: throw exception
     return res;
 }
 
 const Polynomial& operator*=(Polynomial& left, const Polynomial& right) {
-    uint64_t *temp = new uint64_t[left.N];
-    NaiveNegacyclicConvolution(temp, left.ax, right.ax, left.N, left.m, left.mu, left.logm);
-    move(temp, temp + left.N, left.ax);
-    delete [] temp;
+    if (left.format == COEF && right.format == COEF) {
+        uint64_t *temp = new uint64_t[left.N];
+        NaiveNegacyclicConvolution(temp, left.ax, right.ax, left.N, left.m, left.mu, left.logm);
+        move(temp, temp + left.N, left.ax);
+        delete [] temp;
+    } else if (left.format == EVAL && right.format == EVAL) {
+        ModHadamardMul(left.ax, right.ax, left.N, left.m, left.mu, left.logm);
+    } else 
+        return left; // formats mismatched! todo: throw exception
     return left;
 }
 

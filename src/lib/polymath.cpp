@@ -168,10 +168,7 @@ void NaiveInvNTT(uint64_t *res, const uint64_t *ax, const uint64_t *itf, const u
     delete [] tx;
 }
 
-void CooleyTukeyForwardNTT(uint64_t *ax, const uint64_t *tf, size_t N, uint64_t m) {
-    size_t logm = MSB(m);
-    uint64_t prec = BarrettPrecompute(m, logm);
-
+void CooleyTukeyForwardNTT(uint64_t *ax, const uint64_t *tf, size_t N, uint64_t m, uint64_t prec, size_t logm) {
     size_t t = N;
     for (size_t n = 1; n < N; n <<= 1) {
         t >>= 1;
@@ -190,16 +187,8 @@ void CooleyTukeyForwardNTT(uint64_t *ax, const uint64_t *tf, size_t N, uint64_t 
 }
 
 
-void GentlemanSandeInverseNTT(uint64_t *ax, const uint64_t *itf, size_t N, uint64_t m) {
-    uint64_t invN = ModInvPrime(N, m);
-
-    uint64_t prec_s = ShoupPrecompute(invN, m);
-
-    size_t logm = MSB(m);
-    uint64_t prec_b = BarrettPrecompute(m, logm);
-
+void GentlemanSandeInverseNTT(uint64_t *ax, const uint64_t *itf, size_t N, uint64_t m, uint64_t invN, uint64_t prec_b, uint64_t prec_s, size_t logm) {
     size_t t = 1;
-
     for (size_t h = N>>1; h > 0; h >>= 1) {
         size_t j1 = 0;
         for (size_t i = 0; i < h; i++) {

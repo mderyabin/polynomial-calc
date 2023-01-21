@@ -6,55 +6,42 @@ using namespace std;
 
 int main(int argc, char const *argv[])
 {
-    // uint64_t m = 4294967311;
-    uint64_t m = 17;
-	uint64_t N = 8;
-	uint64_t logm = MSB(m);
+    size_t logN = 3;
+    size_t logm = 5;
+    size_t N = 1 << logN;
+    size_t M = N << 1;
+    uint64_t m = FindFirstPrimeUp(logm, M);
 
-    Polynomial poly(N, m);
+    cout << "logm = " << logm << endl;
+    cout << "logN = " << logN << endl;
+    cout << "N = " << N << endl;
+    cout << "M = " << M << endl;
+    cout << "m = " << m << endl;
 
-    uint64_t sum = 0;
-    for (size_t i = 0; i < 8; i++) {
-        poly[i] = i+1;
-        sum += i+1;
-    }
+    Polynomial A(N, m);
+    A.GenerateUniform();
 
-    cout << "A(x) = " << poly << endl;
+    Polynomial B(N, m);
+    B.GenerateUniform();
 
-    cout << "A(0) = " << poly(1) << endl;
-    cout << "check " << sum % poly.GetModulus() << endl;
+    cout << "A(x) = " << A << endl;
+    cout << "B(x) = " << B << endl;
 
-    cout << "A(0) = " << poly(0) << endl;
-    cout << "A(3) = " << poly(3) << endl;
+    cout << "naive A(x) * B(x) = " << A*B << endl;
 
-    Polynomial poly1(N, m);
-    for (size_t i = 0; i < N; i++) {
-        poly1[i] = (i*i) % m;
-    }
-    cout << "B(x) = "  << poly1 << endl;
+    A.SetFormatEval();
+    B.SetFormatEval();
 
-    Polynomial poly2;
-    poly2 = poly + poly1;
+    cout << "NTT(A(x)) = " << A << endl;
+    cout << "NTT(B(x)) = " << B << endl;
 
-    cout << "A(x) + B(x) = " << poly2 << endl;
+    Polynomial C = A * B;
 
-    Polynomial poly3;
-    poly3 = poly * poly1;
+    cout << "NTT(C) = NTT(A(x)) * NTT(B(x)) = " << C << endl;
 
-    cout << "A(x) * B(x) mod (X^"<< poly.GetN() <<" + 1) = " << poly3 << endl;
+    C.SetFormatCoef();
 
-	Polynomial monomial(N, m, true);
-    monomial[2] = 1;
-	
-	cout << "D(X) = " << monomial << endl;
-	cout << "A(X) * D(X) = " << poly * monomial << endl;
-
-    Polynomial monomial1(N, m, true);
-    monomial1[6] = m-1;
-	
-	cout << "D(X) = " << monomial1 << endl;
-	cout << "A(X) * D(X) = " << (poly * monomial)*monomial1 << endl;
-	
+    cout << "C = INTT(NTT(C)) = " << C << endl;
 	
     return 0;
 }

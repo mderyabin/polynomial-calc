@@ -2,8 +2,15 @@
 #define __POLYNOMIAL_H__
 
 #include <iostream>
+#include <memory>
 
 #include "polymath.h"
+#include "ntt.h"
+
+// determines the current state of polynomial
+// EVAL if polynomial is in NTT format
+// COEF if polynomial is represented in coefficients
+enum Format { EVAL, COEF };
 
 class Polynomial {
 private:
@@ -13,11 +20,15 @@ private:
 
     uint64_t mu;   // Barrett mul precompute constant 
     uint64_t logm; // size of modulus in bits
+
+    Format format;
+
+    std::shared_ptr<NTT> ntt;
 public:
     // constructors
-    Polynomial() : ax(NULL), N(0), m(0) { }
-    Polynomial(size_t _N, uint64_t _m, bool initWithZeros = true);
-    Polynomial(uint64_t *_ax, size_t _N, uint64_t _m);
+    Polynomial() : ax(NULL), N(0), m(0), format(COEF) { }
+    Polynomial(size_t _N, uint64_t _m, bool initWithZeros = true, Format _format = COEF);
+    Polynomial(uint64_t *_ax, size_t _N, uint64_t _m, Format _format = COEF);
 
     Polynomial(const Polynomial &o); // copy
     Polynomial& operator=(const Polynomial &o);
@@ -29,11 +40,12 @@ public:
     ~Polynomial() { if (ax) delete [] ax; }
 
     // fill polynomial
-    
+    void GenerateUniform(Format _format = COEF);
 
     // get parameters
     size_t GetN() const { return N; }
     uint64_t GetModulus() const { return m; }
+    Format GetFormat() const { return format; }
 
     // indexing 
     uint64_t &operator[](size_t i) { return ax[i]; }
@@ -44,6 +56,10 @@ public:
 
     // print to the stream
     friend std::ostream& operator<<(std::ostream& os, const Polynomial& Polynomial);
+
+    // format change
+    void SetFormatEval();
+    void SetFormatCoef();
 
     // arithmetic 
     friend const Polynomial operator+(const Polynomial& left, const Polynomial& right);
