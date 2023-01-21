@@ -5,28 +5,20 @@
 
 using namespace std;
 
-void printpoly(uint64_t *poly, size_t N, string polyname) {
-    cout << polyname << " = ";
-    cout << poly[0];
-    for (size_t i = 1; i < N; i++) {
-        cout << " + " << poly[i] << "*X^" << i;
-    }
-    cout << endl;
-}
+void printpoly(uint64_t *poly, size_t N, string polyname);
+void printvec(uint64_t *vec, size_t N, string vecname);
 
-void printvec(uint64_t *vec, size_t N, string vecname) {
-    cout << vecname << " = [";
-    cout << vec[0];
-    for (size_t i = 1; i < N; i++) {
-        cout << ", " << vec[i];
-    }
-    cout << "]" << endl;
-}
+void read_command_line(size_t &logN, size_t &logm, int argc, char const *argv[]);
 
 int main(int argc, char const *argv[]) {
 
+    // only independent parameters, specified by user
     size_t logN = 3;
     size_t logm = 5;
+
+    // read parameters from command line (logN first, logm second)
+    read_command_line(logN, logm, argc, argv);
+
     size_t N = 1 << logN;
     size_t M = N << 1;
 
@@ -50,8 +42,8 @@ int main(int argc, char const *argv[]) {
     uint64_t *tf_br = new uint64_t[N];
     uint64_t *itf_br = new uint64_t[N];
 
-    ComputeTwiddleFactors(tf_br, N, m, false, true);
-    ComputeTwiddleFactors(itf_br, N, m, true, true);
+    ComputeTwiddleFactors(tf_br, N, m, false);
+    ComputeTwiddleFactors(itf_br, N, m, true);
 
     // for (size_t i = 0; i < N; i++) {
     //     cout << "tf_br[" << i << "] = " << tf_br[i] << endl;
@@ -97,4 +89,31 @@ int main(int argc, char const *argv[]) {
     delete [] itf_br;
     delete [] tf_br;
     return 0;
+}
+
+void printvec(uint64_t *vec, size_t N, string vecname) {
+    cout << vecname << " = [";
+    cout << vec[0];
+    for (size_t i = 1; i < N; i++) {
+        cout << ", " << vec[i];
+    }
+    cout << "]" << endl;
+}
+
+void printpoly(uint64_t *poly, size_t N, string polyname) {
+    cout << polyname << " = ";
+    cout << poly[0];
+    for (size_t i = 1; i < N; i++) {
+        cout << " + " << poly[i] << "*X^" << i;
+    }
+    cout << endl;
+}
+
+void read_command_line(size_t &logN, size_t &logm, int argc, char const *argv[]) {
+    if (argc > 1) {
+        logN = stoi(string(argv[1]));
+    }
+    if (argc > 2) {
+        logm = stoi(string(argv[2]));
+    }
 }

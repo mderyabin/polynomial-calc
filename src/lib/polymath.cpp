@@ -85,7 +85,8 @@ size_t ReverseBits(size_t number, size_t bit_length) {
     return reversed;
 }
 
-void ComputeTwiddleFactors(uint64_t *tf, size_t N, uint64_t m, bool isinverse, bool tobitrev) {
+// twiddle factors generated here absorb powers of 2N-th roots to avoid NWC 
+void ComputeTwiddleFactors(uint64_t *tf, size_t N, uint64_t m, bool isinverse) {
     uint64_t g = FindGenerator(m, N << 1);
 
     if (isinverse) 
@@ -95,8 +96,8 @@ void ComputeTwiddleFactors(uint64_t *tf, size_t N, uint64_t m, bool isinverse, b
     size_t logN = MSB(N) - 1;
 
     uint64_t gg = ModMult(g, g, m);
-    if (tobitrev) gg = ModMult(gg, g, m);
-    //std::cout << "GG = " << gg << " isinverse = " << isinverse << std::endl;
+    gg = ModMult(gg, g, m);
+
     uint64_t prec = ShoupPrecompute(gg, m);
 
     tf_direct[0] = 1;
@@ -104,17 +105,28 @@ void ComputeTwiddleFactors(uint64_t *tf, size_t N, uint64_t m, bool isinverse, b
         tf_direct[i] = ModMulShoup(tf_direct[i-1], gg, m, prec);
     }
 
-    if (tobitrev) {
-        for (size_t i = 0; i < N; i++) {
-            tf[i] = tf_direct[ReverseBits(i, logN)];
-        }
-    } else {
-        for (size_t i = 0; i < N; i++) {
-            tf[i] = tf_direct[i];
-        }
+    for (size_t i = 0; i < N; i++) {
+        tf[i] = tf_direct[ReverseBits(i, logN)];
     }
     
     delete [] tf_direct;
+}
+
+void ComputeTwiddleFactorsNaive(uint64_t *tf, size_t N, uint64_t m, bool isinverse) {
+    uint64_t g = FindGenerator(m, N << 1);
+
+    if (isinverse) 
+        g = ModInvPrime(g, m);
+
+    size_t logN = MSB(N) - 1;
+
+    uint64_t gg = ModMult(g, g, m);
+    uint64_t prec = ShoupPrecompute(gg, m);
+
+    tf[0] = 1;
+    for (size_t i = 1; i < N; i++) {
+        tf[i] = ModMulShoup(tf[i-1], gg, m, prec);
+    }
 }
 
 void ComputeNWCSequence(uint64_t *pows, size_t N, uint64_t m, bool isinverse) {
@@ -168,6 +180,7 @@ void NaiveInvNTT(uint64_t *res, const uint64_t *ax, const uint64_t *itf, const u
     delete [] tx;
 }
 
+// using algorithm from https://eprint.iacr.org/2016/504.pdf
 void CooleyTukeyForwardNTT(uint64_t *ax, const uint64_t *tf, size_t N, uint64_t m, uint64_t prec, size_t logm) {
     size_t t = N;
     for (size_t n = 1; n < N; n <<= 1) {
@@ -186,7 +199,7 @@ void CooleyTukeyForwardNTT(uint64_t *ax, const uint64_t *tf, size_t N, uint64_t 
     }
 }
 
-
+// using algorithm from https://eprint.iacr.org/2016/504.pdf
 void GentlemanSandeInverseNTT(uint64_t *ax, const uint64_t *itf, size_t N, uint64_t m, uint64_t invN, uint64_t prec_b, uint64_t prec_s, size_t logm) {
     size_t t = 1;
     for (size_t h = N>>1; h > 0; h >>= 1) {

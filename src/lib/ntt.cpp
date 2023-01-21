@@ -5,6 +5,9 @@
 using namespace std;
 
 NTT::NTT(size_t _N, uint64_t _m) : N(_N), m(_m) {
+    if (N != (1<<(MSB(N)-1))) throw invalid_argument("dimension is invalid");
+    if (!IsPrime(m) || (m % (2*N) != 1)) throw invalid_argument("modulus is invalid");
+
     tf = new uint64_t[N];
     itf = new uint64_t[N];
 
@@ -18,12 +21,12 @@ NTT::NTT(size_t _N, uint64_t _m) : N(_N), m(_m) {
     // compute twiddle factors for forward NTT
     // combines powers of N-th root of unity for NTT with powers of 2N-th root for NWC
     // stored in bit-reversed order
-    ComputeTwiddleFactors(tf, N, m, false, true);
+    ComputeTwiddleFactors(tf, N, m, false);
 
     // compute twiddle factors for inverse NTT
     // combines powers of inversion of N-th root of unity for INTT with powers of inversion of 2N-th root for INWC
     // stored in bit-reversed order
-    ComputeTwiddleFactors(itf, N, m, true, true);
+    ComputeTwiddleFactors(itf, N, m, true);
 }
 
 NTT::~NTT() {
@@ -52,6 +55,9 @@ void NTT::ComputeInverse(uint64_t *res, const uint64_t *ax) {
 
 map<pair<size_t, uint64_t>, shared_ptr<NTT>> NTTManager::ntt_map = map<pair<size_t, uint64_t>, shared_ptr<NTT>>();
 shared_ptr<NTT> NTTManager::GetNTTPtr(size_t N, uint64_t m) {
+    if (N != (1<<(MSB(N)-1))) throw invalid_argument("dimension is invalid");
+    if (!IsPrime(m) || (m % (2*N) != 1)) throw invalid_argument("modulus is invalid");
+
     pair<size_t, uint64_t> Nmpair(N, m);
 
     auto ntt_search = NTTManager::ntt_map.find(Nmpair);

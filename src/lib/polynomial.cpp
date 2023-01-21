@@ -5,6 +5,9 @@
 using namespace std;
 
 Polynomial::Polynomial(size_t _N, uint64_t _m, bool initWithZeros, Format _format) : N(_N), m(_m), format(_format) {
+    if (N != (1<<(MSB(N)-1))) throw invalid_argument("dimension is invalid");
+    if (!IsPrime(m) || (m % (2*N) != 1)) throw invalid_argument("modulus is invalid");
+    
     ax = new uint64_t[N];
     if (initWithZeros) {
         for (size_t i = 0; i < N; i++) {
@@ -18,6 +21,9 @@ Polynomial::Polynomial(size_t _N, uint64_t _m, bool initWithZeros, Format _forma
 }
 
 Polynomial::Polynomial(uint64_t *_ax, size_t _N, uint64_t _m, Format _format) : N(_N), m(_m), format(_format) {
+    if (N != (1<<(MSB(N)-1))) throw invalid_argument("dimension is invalid");
+    if (!IsPrime(m) && (m % (2*N) != 1)) throw invalid_argument("modulus is invalid");
+
     ax = new uint64_t[N];
     copy(_ax, _ax + N, ax);
     logm = MSB(m);
@@ -80,6 +86,7 @@ void Polynomial::GenerateUniform(Format _format) {
 }
 
 uint64_t Polynomial::operator()(uint64_t x) const {
+    x %= m;
     if (format == COEF)
         return ComputeValue(x, ax, N, m);
     else {
@@ -140,29 +147,37 @@ void Polynomial::SetFormatCoef() {
 }
 
 const Polynomial& operator+=(Polynomial& left, const Polynomial& right) {
-    if (left.m != right.m || left.m != right.m)
-        return left;
+    if (left.m != right.m || left.N != right.N)
+        throw runtime_error("Parameters mismatched in addition");
     ModAdd(left.ax, right.ax, left.N, left.m);
     return left;
 }
 
 const Polynomial operator+(const Polynomial& left, const Polynomial& right) {
+    if (left.m != right.m || left.N != right.N)
+        throw runtime_error("Parameters mismatched in addition");
     Polynomial res(left);
     return (res += right);
 }
 
 const Polynomial operator*(const Polynomial& left, const Polynomial& right) {
+    if (left.m != right.m || left.N != right.N)
+        throw runtime_error("Parameters mismatched in multiplication");
+
     Polynomial res(left);
     if (left.format == COEF && right.format == COEF)
         NaiveNegacyclicConvolution(res.ax, left.ax, right.ax, res.N, res.m, res.mu, res.logm);
     else if (left.format == EVAL && right.format == EVAL)
         ModHadamardMul(res.ax, right.ax, res.N, res.m, res.mu, res.logm);
     else 
-        return res; // formats mismatched! todo: throw exception
+        throw runtime_error("Formats mismatched in multiplication");
     return res;
 }
 
 const Polynomial& operator*=(Polynomial& left, const Polynomial& right) {
+    if (left.m != right.m || left.N != right.N)
+        throw runtime_error("Parameters mismatched in multiplication");
+
     if (left.format == COEF && right.format == COEF) {
         uint64_t *temp = new uint64_t[left.N];
         NaiveNegacyclicConvolution(temp, left.ax, right.ax, left.N, left.m, left.mu, left.logm);
@@ -171,7 +186,7 @@ const Polynomial& operator*=(Polynomial& left, const Polynomial& right) {
     } else if (left.format == EVAL && right.format == EVAL) {
         ModHadamardMul(left.ax, right.ax, left.N, left.m, left.mu, left.logm);
     } else 
-        return left; // formats mismatched! todo: throw exception
+        throw runtime_error("Formats mismatched in multiplication");
     return left;
 }
 

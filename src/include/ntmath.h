@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <vector>
 #include <unordered_set>
+#include <exception>
 
 size_t MSB(uint64_t t);
 

@@ -17,7 +17,8 @@ void NaiveNegacyclicConvolution(uint64_t *cx, const uint64_t *ax, const uint64_t
 void NaiveNegacyclicConvolution(uint64_t *cx, const uint64_t *ax, const uint64_t *bx, size_t N, uint64_t m, uint64_t mu, uint64_t logm);
 
 size_t ReverseBits(size_t number, size_t bit_length);
-void ComputeTwiddleFactors(uint64_t *tf, size_t N, uint64_t m, bool isinverse = false, bool tobitrev = true);
+void ComputeTwiddleFactors(uint64_t *tf, size_t N, uint64_t m, bool isinverse = false);
+void ComputeTwiddleFactorsNaive(uint64_t *tf, size_t N, uint64_t m, bool isinverse = false);
 void ComputeNWCSequence(uint64_t *pows, size_t N, uint64_t m, bool isinverse = false);
 
 void NaiveNTT(uint64_t *res, const uint64_t *ax, const uint64_t *tf, const uint64_t *pows, size_t N, uint64_t m);
