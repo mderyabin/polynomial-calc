@@ -16,24 +16,24 @@ int main(int argc, char const *argv[]) {
 
     // only independent parameters, specified by user
     size_t logN = 12;
-    size_t logm = 58;
+    size_t logq = 58;
 
     // read parameters from command line (logN first, logm second)
-    read_command_line(logN, logm, argc, argv);
+    read_command_line(logN, logq, argc, argv);
 
     size_t N = 1 << logN;
     size_t M = N << 1;
-    uint64_t m = FindFirstPrimeDown(logm, M);
+    uint64_t q = FindFirstPrimeDown(logq, M);
 
-    cout << "logm = " << logm << endl;
+    cout << "logq = " << logq << endl;
     cout << "logN = " << logN << endl;
     cout << "N = " << N << endl;
     cout << "M = " << M << endl;
-    cout << "m = " << m << endl;
+    cout << "q = " << q << endl;
 
-    Polynomial A(N, m);
-    Polynomial B(N, m);
-    Polynomial C(N, m);
+    Polynomial A(N, q);
+    Polynomial B(N, q);
+    Polynomial C(N, q);
 
     A.GenerateUniform();
     B.GenerateUniform();
@@ -49,20 +49,20 @@ int main(int argc, char const *argv[]) {
     uint64_t *nttax = new uint64_t[N];
     uint64_t *inttax = new uint64_t[N];
 
-    GenerateUniformPoly(ax, N, m); 
+    GenerateUniformPoly(ax, N, q); 
 
-    ComputeTwiddleFactorsNaive(tf, N, m, false);
-    ComputeTwiddleFactorsNaive(itf, N, m, true);
-    ComputeNWCSequence(pows, N, m, false);
-    ComputeNWCSequence(ipows, N, m, true);
+    ComputeTwiddleFactorsNaive(tf, N, q, false);
+    ComputeTwiddleFactorsNaive(itf, N, q, true);
+    ComputeNWCSequence(pows, N, q, false);
+    ComputeNWCSequence(ipows, N, q, true);
 
     start = high_resolution_clock::now();
-    NaiveNTT(nttax, ax, tf, pows, N, m);
+    NaiveNTT(nttax, ax, tf, pows, N, q);
     stop = high_resolution_clock::now();
     print_time(start, stop, "Naive NTT");
 
     start = high_resolution_clock::now();
-    NaiveInvNTT(inttax, nttax, itf, ipows, N, m);
+    NaiveInvNTT(inttax, nttax, itf, ipows, N, q);
     stop = high_resolution_clock::now();
     print_time(start, stop, "Naive Inverse NTT");
 
@@ -116,9 +116,9 @@ int main(int argc, char const *argv[]) {
 
 void read_command_line(size_t &logN, size_t &logm, int argc, char const *argv[]) {
     if (argc == 1) {
-        cout << "Parameters logN and logm are set to default." << endl;
+        cout << "Parameters logN and logq are set to default." << endl;
         cout << "To set this parameters from command line, use template: " << endl;
-        cout << argv[0] << " [logN] [logm]" << endl << endl;
+        cout << argv[0] << " [logN] [logq]" << endl << endl;
     }
 
     if (argc > 1) {
