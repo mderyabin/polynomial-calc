@@ -14,7 +14,7 @@ long double generaternd(long double a, long double b);
 int main(int argc, char const *argv[]) {
 
     // only independent parameters, specified by user
-    size_t logN = 4;
+    size_t logN = 2;
     size_t logq = 20;
 
     size_t slots = 2;
