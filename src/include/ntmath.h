@@ -6,6 +6,8 @@
 #include <unordered_set>
 #include <exception>
 
+namespace polycalc {
+
 size_t MSB(uint64_t t);
 
 // return a + b mod m
@@ -48,5 +50,7 @@ uint64_t FindPrimitive(uint64_t n);
 uint64_t FindGenerator(uint64_t m, size_t M);
 
 uint64_t ModInvPrime(uint64_t a, uint64_t m);
+
+}
 
 #endif /* __NTMATH_H__ */

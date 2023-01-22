@@ -2,6 +2,8 @@
 
 using namespace std;
 
+namespace polycalc {
+
 const cdouble ZERO(0.0, 0.0);
 const cdouble  ONE(1.0, 0.0);
 
@@ -142,4 +144,6 @@ cvector decode(Polynomial poly, uint64_t scale) {
     }
     
     return result;
+}
+
 }

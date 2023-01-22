@@ -3,6 +3,7 @@
 #include "ntmath.h"
 
 using namespace std;
+using namespace polycalc;
 
 int main() {
     size_t logN = 10;

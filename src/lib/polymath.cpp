@@ -4,6 +4,8 @@
 
 #include "polymath.h"
 
+namespace polycalc {
+
 void GenerateUniformPoly(uint64_t *ax, size_t N, uint64_t m) {
     std::random_device rd;
     std::default_random_engine en(rd());
@@ -220,4 +222,6 @@ void GentlemanSandeInverseNTT(uint64_t *ax, const uint64_t *itf, size_t N, uint6
     for (size_t j = 0; j < N; j++) {
         ModMulShoupEq(ax[j], invN, m, prec_s);
     }
+}
+
 }

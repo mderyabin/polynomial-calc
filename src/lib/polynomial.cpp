@@ -4,6 +4,8 @@
 
 using namespace std;
 
+namespace polycalc {
+
 Polynomial::Polynomial(size_t _N, uint64_t _m, bool initWithZeros, Format _format) : N(_N), m(_m), format(_format) {
     if (N != (1<<(MSB(N)-1))) throw invalid_argument("dimension is invalid");
     if (!IsPrime(m) || (m % (2*N) != 1)) throw invalid_argument("modulus is invalid");
@@ -190,4 +192,4 @@ const Polynomial& operator*=(Polynomial& left, const Polynomial& right) {
     return left;
 }
 
-
+}

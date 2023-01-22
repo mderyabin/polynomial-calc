@@ -7,6 +7,8 @@
 #include "polymath.h"
 #include "ntt.h"
 
+namespace polycalc {
+
 // determines the current state of polynomial
 // EVAL if polynomial is in NTT format
 // COEF if polynomial is represented in coefficients
@@ -68,5 +70,7 @@ public:
     friend const Polynomial operator*(const Polynomial& left, const Polynomial& right);
     friend const Polynomial& operator*=(Polynomial& left, const Polynomial& right);
 };
+
+}
 
 #endif /* __POLYNOMIAL_H__ */

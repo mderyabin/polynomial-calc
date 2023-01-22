@@ -4,6 +4,8 @@
 #include <random>
 using namespace std;
 
+namespace polycalc {
+
 typedef unsigned __int128 uint128_t;
 
 size_t MSB(uint64_t t) {
@@ -210,7 +212,7 @@ bool IsPrime(uint64_t m, size_t iters) {
     uint64_t prec = BarrettPrecompute(m, logm);
 
     // повторить k раз
-    for (int i = 0; i < iters; i++) {
+    for (size_t i = 0; i < iters; i++) {
         // выберем случайное целое число a в отрезке [2, m − 2]
         uint64_t a = rnd(en);
  
@@ -222,7 +224,7 @@ bool IsPrime(uint64_t m, size_t iters) {
             continue;
  
         // повторить s − 1 раз
-        for (int r = 1; r < s; r++) {
+        for (size_t r = 1; r < s; r++) {
             // x ← x^2 mod n
             x = ModMultBarrett(x, x, m, prec, logm);
 
@@ -394,7 +396,7 @@ uint64_t FindPrimitive(uint64_t n)
     uint64_t prec = BarrettPrecompute(n, logn);
  
     // Check for every number from 2 to phi
-    for (int r=2; r<=phi; r++) {
+    for (size_t r=2; r<=phi; r++) {
         // Iterate through all prime factors of phi.
         // and check if we found a power with value 1
         bool flag = false;
@@ -425,4 +427,6 @@ uint64_t FindGenerator(uint64_t m, size_t M) {
 
 uint64_t ModInvPrime(uint64_t a, uint64_t m) {
     return ModExp(a, m-2, m);
+}
+
 }

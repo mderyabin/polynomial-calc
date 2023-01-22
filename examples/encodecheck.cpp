@@ -1,12 +1,12 @@
-#include <iostream>
+#include "utils.h"
 
-#include "polynomial.h"
 #include "encode.h"
 
 #include <vector>
 #include <complex>
 
 using namespace std;
+using namespace polycalc;
 
 int main() {
     uint64_t m = 2048;

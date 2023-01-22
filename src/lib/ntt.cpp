@@ -4,6 +4,8 @@
 
 using namespace std;
 
+namespace polycalc {
+
 NTT::NTT(size_t _N, uint64_t _m) : N(_N), m(_m) {
     if (N != (1<<(MSB(N)-1))) throw invalid_argument("dimension is invalid");
     if (!IsPrime(m) || (m % (2*N) != 1)) throw invalid_argument("modulus is invalid");
@@ -72,4 +74,6 @@ shared_ptr<NTT> NTTManager::GetNTTPtr(size_t N, uint64_t m) {
     }
 
     return ntt;
+}
+
 }

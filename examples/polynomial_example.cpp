@@ -1,14 +1,11 @@
-#include <iostream>
+#include "utils.h"
 
 #include "polynomial.h"
 
 using namespace std;
+using namespace polycalc;
 
-void read_command_line(size_t &logN, size_t &logq, int argc, char const *argv[]);
-
-int main(int argc, char const *argv[])
-{
-
+int main(int argc, char const *argv[]) {
     // only independent parameters, specified by user
     size_t logN = 3;
     size_t logq = 5;
@@ -52,19 +49,4 @@ int main(int argc, char const *argv[])
     cout << "C = INTT(NTT(C)) = " << C << endl;
 	
     return 0;
-}
-
-void read_command_line(size_t &logN, size_t &logq, int argc, char const *argv[]) {
-    if (argc == 1) {
-        cout << "Parameters logN and logq are set to default." << endl;
-        cout << "To set this parameters from command line, use template: " << endl;
-        cout << argv[0] << " [logN] [logq]" << endl << endl;
-    }
-
-    if (argc > 1) {
-        logN = stoi(string(argv[1]));
-    }
-    if (argc > 2) {
-        logq = stoi(string(argv[2]));
-    }
 }

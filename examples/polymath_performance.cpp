@@ -1,13 +1,13 @@
-#include <iostream>
-#include <chrono>
-
+#include "utils.h"
 
 #include "polynomial.h"
+
+#include <chrono>
 
 using namespace std;
 using namespace std::chrono;
 
-void read_command_line(size_t &logN, size_t &logm, int argc, char const *argv[]);
+using namespace polycalc;
 
 void print_time(steady_clock::time_point start, steady_clock::time_point stop, string comment);
 
@@ -112,21 +112,6 @@ int main(int argc, char const *argv[]) {
     print_time(start, stop, "NTT-based multiplication (without transforms)");
 
     return 0;
-}
-
-void read_command_line(size_t &logN, size_t &logm, int argc, char const *argv[]) {
-    if (argc == 1) {
-        cout << "Parameters logN and logq are set to default." << endl;
-        cout << "To set this parameters from command line, use template: " << endl;
-        cout << argv[0] << " [logN] [logq]" << endl << endl;
-    }
-
-    if (argc > 1) {
-        logN = stoi(string(argv[1]));
-    }
-    if (argc > 2) {
-        logm = stoi(string(argv[2]));
-    }
 }
 
 void print_time(steady_clock::time_point start, steady_clock::time_point stop, string comment) {

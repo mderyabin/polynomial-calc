@@ -6,6 +6,7 @@
 
 #include "polymath.h"
 
+namespace polycalc {
 
 class NTT {
 private:
@@ -39,5 +40,7 @@ class NTTManager {
 public:
     static std::shared_ptr<NTT> GetNTTPtr(size_t N, uint64_t m);
 };
+
+}
 
 #endif /* __NTT_H__ */

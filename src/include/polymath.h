@@ -3,6 +3,8 @@
 
 #include "ntmath.h"
 
+namespace polycalc {
+
 void GenerateUniformPoly(uint64_t *ax, size_t N, uint64_t m);
 
 void ModAdd(uint64_t *cx, const uint64_t *ax, const uint64_t *bx, size_t N, uint64_t m);
@@ -26,5 +28,7 @@ void NaiveInvNTT(uint64_t *res, const uint64_t *ax, const uint64_t *itf, const u
 
 void CooleyTukeyForwardNTT(uint64_t *ax, const uint64_t *tf, size_t N, uint64_t m, uint64_t prec, size_t logm);
 void GentlemanSandeInverseNTT(uint64_t *ax, const uint64_t *itf, size_t N, uint64_t m, uint64_t invN, uint64_t prec_b, uint64_t prec_s, size_t logm);
+
+} 
 
 #endif /* __POLYMATH_H__ */
