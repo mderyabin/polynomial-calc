@@ -15,7 +15,7 @@ int main(int argc, char const *argv[]) {
 
     // only independent parameters, specified by user
     size_t logN = 4;
-    size_t logq = 15;
+    size_t logq = 20;
 
     size_t slots = 2;
     size_t scale = 1 << 6;
