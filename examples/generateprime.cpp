@@ -4,7 +4,7 @@
 
 using namespace std;
 
-int main(int argc, char const *argv[]) {
+int main() {
     size_t logN = 10;
     size_t logm = 20;
     size_t N = 1 << logN;

@@ -8,7 +8,7 @@
 
 using namespace std;
 
-int main(int argc, char const *argv[]) {
+int main() {
     uint64_t m = 2048;
     size_t N = 4;
     uint64_t scale = 128;

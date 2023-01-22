@@ -6,6 +6,8 @@ This way is allowing to separate and analyze algorithms separately. All necessar
 
 NTT operations are mirrored in `NTT` class for convenience. Helper class `NTTManager` ensures that only a single copy of `NTT` class for particular pair of parameters `N` and `m` exist.
 
+Check NTT and multiplication performance using example `polymath_performance.cpp`.
+
 # How to compile and run
 
 ```

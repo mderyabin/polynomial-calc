@@ -50,7 +50,7 @@ uint64_t ComputeValue(uint64_t x, const uint64_t *ax, size_t N, uint64_t m) {
     uint64_t mu = BarrettPrecompute(m, logm);
     for (size_t i = 1; i < N; i++) {
         res = ModAdd(res, ModMultBarrett(ax[i], xpow, m, mu, logm), m);
-        xpow = ModMulShoup(xpow, x, m, logm);
+        xpow = ModMulShoup(xpow, x, m, pr);
     }
     return res;
 }
@@ -117,8 +117,6 @@ void ComputeTwiddleFactorsNaive(uint64_t *tf, size_t N, uint64_t m, bool isinver
 
     if (isinverse) 
         g = ModInvPrime(g, m);
-
-    size_t logN = MSB(N) - 1;
 
     uint64_t gg = ModMult(g, g, m);
     uint64_t prec = ShoupPrecompute(gg, m);

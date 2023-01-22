@@ -15,11 +15,10 @@ enum Format { EVAL, COEF };
 class Polynomial {
 private:
     uint64_t *ax;  // coefficients
-    uint64_t m;    // modulus
     size_t N;      // degree
-
-    uint64_t mu;   // Barrett mul precompute constant 
+    uint64_t m;    // modulus
     uint64_t logm; // size of modulus in bits
+    uint64_t mu;   // Barrett mul precompute constant 
 
     Format format;
 
