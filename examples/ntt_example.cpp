@@ -110,6 +110,12 @@ void printpoly(uint64_t *poly, size_t N, string polyname) {
 }
 
 void read_command_line(size_t &logN, size_t &logm, int argc, char const *argv[]) {
+    if (argc == 1) {
+        cout << "Parameters logN and logm are set to default." << endl;
+        cout << "To set this parameters from command line, use template: " << endl;
+        cout << argv[0] << " [logN] [logm]" << endl << endl;
+    }
+
     if (argc > 1) {
         logN = stoi(string(argv[1]));
     }
