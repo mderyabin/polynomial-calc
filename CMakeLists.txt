@@ -1,13 +1,24 @@
 cmake_minimum_required(VERSION 3.11)
 
 project(PolynomialCalc)
+include(ExternalProject)
 
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_LIBRARY_OUTPUT_DERICTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DERICTORY ${CMAKE_BINARY_DIR}/bin)
 
-SET(CMAKE_CXX_FLAGS "-O3 -Wall -fno-rtti -Wextra")
+ExternalProject_Add(cereal
+    GIT_REPOSITORY https://github.com/USCiLab/cereal.git
+    SOURCE_DIR "${CMAKE_BINARY_DIR}/cereal"
+    BUILD_COMMAND cmake -E echo "Skipping build step for cereal."
+    INSTALL_COMMAND cmake -E echo "Skipping install step for cereal."
+)
+
+SET(CMAKE_CXX_FLAGS "-O3 -Wall -frtti -Wextra")
+
+include_directories(${CMAKE_BINARY_DIR}/cereal/include)
+include_directories(${CMAKE_BINARY_DIR}/cereal/include/cereal)
 
 add_subdirectory(src)
 

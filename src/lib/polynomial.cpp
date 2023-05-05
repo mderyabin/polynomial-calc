@@ -1,6 +1,10 @@
 #include "polynomial.h"
 
 #include <algorithm>
+#include <fstream>
+
+#include <cereal/archives/binary.hpp>
+#include <cereal/archives/json.hpp>
 
 using namespace std;
 
@@ -190,6 +194,116 @@ const Polynomial& operator*=(Polynomial& left, const Polynomial& right) {
     } else 
         throw runtime_error("Formats mismatched in multiplication");
     return left;
+}
+
+// order: format (0 for EVAL and 1 for COEF), N, m, logm, mu, ax[i]
+template<class Archive>
+void Polynomial::save(Archive & archive) const {
+
+    // step 1: save format
+    int format_to_save = 0;
+    
+    switch (format) {
+    case EVAL: 
+        format_to_save = 0;
+        break;
+    case COEF:
+    default:
+        format_to_save = 1;
+        break;
+    }
+
+    archive(cereal::make_nvp("f", format_to_save));
+
+    // step 2: save N, m, logm, mu
+    archive(cereal::make_nvp("N", N));
+    archive(cereal::make_nvp("m", m));
+    archive(cereal::make_nvp("l", logm));
+    archive(cereal::make_nvp("u", mu));
+
+    // step 3: save ax
+    for (size_t i = 0; i < N; i++) {
+        archive(ax[i]);
+    }
+    
+}
+
+template<class Archive>
+void Polynomial::load(Archive & archive) {
+
+    // step 1: load format
+    int format_to_load = 0;
+    archive(cereal::make_nvp("f", format_to_load));
+
+    switch (format_to_load) {
+    case 0: 
+        format = EVAL;
+        break;
+    case 1:
+    default:
+        format = COEF;
+        break;
+    }
+
+    // step 2: load N, m, logm, mu
+    size_t N_temp;
+    archive(cereal::make_nvp("N", N_temp));
+    archive(cereal::make_nvp("m", m));
+    archive(cereal::make_nvp("l", logm));
+    archive(cereal::make_nvp("u", mu));
+
+    if (N_temp != N) {
+        N = N_temp;
+        if (ax) delete [] ax;
+        ax = NULL;
+    }
+
+    if (!ax) ax = new uint64_t[N];
+
+    // step 3: load ax
+    for (size_t i = 0; i < N; i++) {
+        archive(ax[i]);
+    }
+}
+
+void Polynomial::Serialize(string filename, SER_Archive_Type TYPE) {
+    fstream fs;
+    fs.open(filename, ios::out);
+
+    switch (TYPE) {
+    case JSON: {
+        cereal::JSONOutputArchive jarchive(fs);
+        jarchive(*this);
+        break;
+    }
+    case BIN: {
+        cereal::BinaryOutputArchive barchive(fs);
+        barchive(*this);
+        break;
+    }
+    default: 
+        break;
+    }
+}
+
+void Polynomial::Deserialize(std::string filename, SER_Archive_Type TYPE) {
+    fstream fs;
+    fs.open(filename, ios::in);
+
+    switch (TYPE) {
+    case JSON: {
+        cereal::JSONInputArchive jarchive(fs);
+        jarchive(*this);
+        break;
+    }
+    case BIN: {
+        cereal::BinaryInputArchive barchive(fs);
+        barchive(*this);
+        break;
+    }
+    default: 
+        break;
+    }
 }
 
 }
