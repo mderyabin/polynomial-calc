@@ -14,6 +14,7 @@ if(USE_SERIAL)
 ExternalProject_Add(cereal
     GIT_REPOSITORY https://github.com/USCiLab/cereal.git
     SOURCE_DIR "${CMAKE_BINARY_DIR}/cereal"
+    CONFIGURE_COMMAND cmake -E echo "Skipping configure step for cereal."
     BUILD_COMMAND cmake -E echo "Skipping build step for cereal."
     INSTALL_COMMAND cmake -E echo "Skipping install step for cereal."
 )
