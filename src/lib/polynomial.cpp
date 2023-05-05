@@ -3,8 +3,10 @@
 #include <algorithm>
 #include <fstream>
 
+#ifndef N_USE_SERIAL
 #include <cereal/archives/binary.hpp>
 #include <cereal/archives/json.hpp>
+#endif
 
 using namespace std;
 
@@ -196,6 +198,7 @@ const Polynomial& operator*=(Polynomial& left, const Polynomial& right) {
     return left;
 }
 
+#ifndef N_USE_SERIAL
 // order: format (0 for EVAL and 1 for COEF), N, m, logm, mu, ax[i]
 template<class Archive>
 void Polynomial::save(Archive & archive) const {
@@ -305,5 +308,6 @@ void Polynomial::Deserialize(std::string filename, SER_Archive_Type TYPE) {
         break;
     }
 }
+#endif
 
 }

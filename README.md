@@ -18,7 +18,7 @@ make
 ./bin/main
 ```
 
-# How to compile and run on Windows
+## How to compile and run on Windows
 
 Download and install MSYS2 (https://www.msys2.org/) using default settings. Start the MSYS2 MINGW 64-bit shell and execute the following command
 ```
@@ -42,7 +42,7 @@ Build the program using command and run example
 make
 ./bin/main.exe
 ```
-# How to compile and run on MacOS
+## How to compile and run on MacOS
 
 Install the Mac terminal command line functions if needed (type git at the command line to trigger the install). Then install home-brew if not already present:
 ```
@@ -60,3 +60,17 @@ cmake ..
 make 
 ./bin/main
 ```
+
+# CMake Options
+
+To use non-default CMake options you should initialize project using the following command
+```
+cmake .. -DCMAKE_OPTION=VALUE
+```
+Here `CMAKE_OPTION` is one of the options from the list below and `VALUE` is determined in the values column.
+For example, to enable saving and loading of objects to file, use `-D` with option `USE_SERIAL` and set value `ON`: 
+`cmake .. -DUSE_SERIAL=ON`. 
+
+| option | values | desription |   
+|--------|-------|------------|
+|USE_SERIAL| ON/**OFF** | Allows to download and use [cereal library](https://uscilab.github.io/cereal/) for serialization, i.e. enable simple saving and loading to/from files. This option may require installation of boost and doxigen, therefore it turned OFF by default | 

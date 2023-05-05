@@ -8,7 +8,9 @@
 #include "polymath.h"
 #include "ntt.h"
 
+#ifndef N_USE_SERIAL
 #include "cereal.hpp"
+#endif
 
 namespace polycalc {
 
@@ -31,6 +33,7 @@ private:
 
     std::shared_ptr<NTT> ntt;
 
+#ifndef N_USE_SERIAL
     friend class cereal::access;
 
     // order: format (0 for EVAL and 1 for COEF), N, m, logm, mu, ax[i]
@@ -39,6 +42,7 @@ private:
 
     template<class Archive>
     void load(Archive & archive);
+#endif
 public:
     // constructors
     Polynomial() : ax(NULL), N(0), m(0), format(COEF) { }
@@ -84,10 +88,11 @@ public:
     friend const Polynomial operator*(const Polynomial& left, const Polynomial& right);
     friend const Polynomial& operator*=(Polynomial& left, const Polynomial& right);
 
-
+#ifndef N_USE_SERIAL
     // serialization
     void Serialize(std::string filename, SER_Archive_Type TYPE = BIN);
     void Deserialize(std::string filename, SER_Archive_Type TYPE = BIN);
+#endif
 };
 
 }
