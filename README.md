@@ -73,4 +73,5 @@ For example, to enable saving and loading of objects to file, use `-D` with opti
 
 | option | values | desription |   
 |--------|-------|------------|
-|USE_SERIAL| ON/**OFF** | Allows to download and use [cereal library](https://uscilab.github.io/cereal/) for serialization, i.e. enable simple saving and loading to/from files. This option may require installation of boost and doxigen, therefore it turned OFF by default | 
+|USE_SERIAL| ON/**OFF** | Allows to download and use [cereal library](https://uscilab.github.io/cereal/) for serialization, i.e. enable simple saving and loading to/from files. This option may require installation of boost and doxygen, therefore it turned OFF by default. 
+To install doxygen abd boost on Mac/Windows use brew and pacman utilities respectively | 
