@@ -37,7 +37,7 @@ mkdir build
 cd build
 cmake .. -G"Unix Makefiles"
 ```
-Build the program using command and run example
+Build the program using the command and run an example
 ```
 make
 ./bin/main.exe
@@ -52,7 +52,7 @@ Install pre-requisites cmake library using Homebrew:
 ```
 brew install cmake
 ```
-Compile and run using dollowing commands (from the project directory)
+Compile and run using following commands (from the project directory)
 ```
 mkdir build
 cd build
@@ -63,7 +63,7 @@ make
 
 # CMake Options
 
-To use non-default CMake options you should initialize project using the following command
+To use non-default CMake options you should initialize the project using the following command
 ```
 cmake .. -DCMAKE_OPTION=VALUE
 ```
@@ -73,4 +73,4 @@ For example, to enable saving and loading of objects to file, use `-D` with opti
 
 | option | values | desription |   
 |--------|-------|------------|
-|USE_SERIAL| ON/**OFF** | Allows to download and use [cereal library](https://uscilab.github.io/cereal/) for serialization, i.e. enable simple saving and loading to/from files. This option may require installation of boost and doxygen, therefore it turned OFF by default. To install doxygen abd boost on Mac/Windows use brew and pacman utilities respectively | 
+|option| option | option | 

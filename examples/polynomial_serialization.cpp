@@ -27,7 +27,6 @@ int main(int argc, char const *argv[]) {
     A.GenerateUniform();
     cout << "A(x) = " << A << endl;
 
-#ifndef N_USE_SERIAL
     A.Serialize("poly.txt", JSON);
 
     Polynomial B;
@@ -37,5 +36,4 @@ int main(int argc, char const *argv[]) {
 
     cout << "N = " << B.GetN() << endl;
     cout << "q = " << B.GetModulus() << endl;
-#endif
 }
