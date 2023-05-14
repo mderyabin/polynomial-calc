@@ -1,3 +1,13 @@
+/**
+ * @file ntmath.h
+ * @author Maxim Deryabin (maxim.deryabin@gmail.com)
+ * @brief Low level functions for math and Number Theory.
+ * @version 0.1
+ * @date 2023-05-14
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
 #ifndef __NTMATH_H__
 #define __NTMATH_H__
 

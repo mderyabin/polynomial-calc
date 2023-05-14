@@ -1,3 +1,13 @@
+/**
+ * @file utils.h
+ * @author Msxim Deryabin (maxim.deryabin@gmail.com)
+ * @brief Common utilities.
+ * @version 0.1
+ * @date 2023-05-14
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
 #ifndef __UTILS_H__
 #define __UTILS_H__
 
@@ -10,8 +20,19 @@
 
 namespace polycalc {
 
+// Serialization type for cereal to dynamically choose the archive type
 enum SER_Archive_Type {BIN, JSON};
 
+/**
+ * @brief Serialize general object of any type.
+ * 
+ * @tparam T serializable object (class or native type)
+ * @param obj object to serialize
+ * @param filename name of file with relative path
+ * @param TYPE serialization type
+ * @return true if serialized successfully
+ * @return false file access error 
+ */
 template<typename T>
 bool SerializeObject(T &obj, std::string filename, const SER_Archive_Type TYPE = BIN) {
     std::fstream fs;
@@ -52,6 +73,16 @@ bool SerializeObject(T &obj, std::string filename, const SER_Archive_Type TYPE =
     return false;
 }
 
+/**
+ * @brief Deserialize general object of any type.
+ * 
+ * @tparam T serializable object (class or native type)
+ * @param obj object to deserialize
+ * @param filename name of file with relative path
+ * @param TYPE serialization type
+ * @return true if deserialized successfully
+ * @return false file access error 
+ */
 template<typename T>
 bool DeserializeObject(T &obj, std::string filename, const SER_Archive_Type TYPE = BIN) {
     std::fstream fs;

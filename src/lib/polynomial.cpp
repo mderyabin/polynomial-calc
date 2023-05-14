@@ -12,11 +12,9 @@ Polynomial::Polynomial(size_t _N, uint64_t _m, bool initWithZeros, Format _forma
     if (!IsPrime(m) || (m % (2*N) != 1)) throw invalid_argument("modulus is invalid");
     
     ax = new uint64_t[N];
-    if (initWithZeros) {
-        for (size_t i = 0; i < N; i++) {
-            ax[i] = 0L;
-        }
-    }
+    if (initWithZeros) 
+        SetZero();
+
     logm = MSB(m);
     mu = BarrettPrecompute(m, logm);
 
@@ -85,7 +83,22 @@ Polynomial& Polynomial::operator=(Polynomial &&o) {
 
 void Polynomial::GenerateUniform(Format _format) {
     format = _format;
+    GenerateUniform();
+}
+
+void Polynomial::GenerateUniform() {
     GenerateUniformPoly(ax, N, m);  
+}
+
+void Polynomial::SetZero(Format _format) {
+    format = _format;
+    SetZero();
+}
+
+void Polynomial::SetZero() {
+    for (size_t i = 0; i < N; i++) {
+        ax[i] = 0L;
+    }
 }
 
 uint64_t Polynomial::operator()(uint64_t x) const {

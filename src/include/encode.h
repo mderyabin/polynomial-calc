@@ -1,4 +1,13 @@
-#ifndef __ENCODE_H__
+/**
+ * @file encode.h
+ * @author Maxim Deryabin (maxim.deryabin@gmail.com)
+ * @brief Functionality for encoding vector of values into Polynomial object in CKKS style. 
+ * @version 0.1
+ * @date 2023-05-14
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
 #define __ENCODE_H__
 
 #include "polynomial.h"

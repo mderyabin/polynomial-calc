@@ -1,3 +1,13 @@
+/**
+ * @file polymath.h
+ * @author Maxim Deryabin (maxim.deryabin@gmail.com)
+ * @brief Some low level polynomial functions, including NTT/INTT
+ * @version 0.1
+ * @date 2023-05-14
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
 #ifndef __POLYMATH_H__
 #define __POLYMATH_H__
 
