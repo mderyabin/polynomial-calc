@@ -1,10 +1,7 @@
 #include "polynomial.h"
 
 #include <algorithm>
-#include <fstream>
 
-#include <cereal/archives/binary.hpp>
-#include <cereal/archives/json.hpp>
 
 using namespace std;
 
@@ -267,43 +264,11 @@ void Polynomial::load(Archive & archive) {
 }
 
 void Polynomial::Serialize(string filename, SER_Archive_Type TYPE) {
-    fstream fs;
-    fs.open(filename, ios::out);
-
-    switch (TYPE) {
-    case JSON: {
-        cereal::JSONOutputArchive jarchive(fs);
-        jarchive(*this);
-        break;
-    }
-    case BIN: {
-        cereal::BinaryOutputArchive barchive(fs);
-        barchive(*this);
-        break;
-    }
-    default: 
-        break;
-    }
+    SerializeObject(*this, filename, TYPE);
 }
 
 void Polynomial::Deserialize(std::string filename, SER_Archive_Type TYPE) {
-    fstream fs;
-    fs.open(filename, ios::in);
-
-    switch (TYPE) {
-    case JSON: {
-        cereal::JSONInputArchive jarchive(fs);
-        jarchive(*this);
-        break;
-    }
-    case BIN: {
-        cereal::BinaryInputArchive barchive(fs);
-        barchive(*this);
-        break;
-    }
-    default: 
-        break;
-    }
+    DeserializeObject(*this, filename, TYPE);
 }
 
 }

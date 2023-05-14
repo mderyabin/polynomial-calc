@@ -6,6 +6,7 @@
 #include <string>
 
 #include "polymath.h"
+#include "utils.h"
 #include "ntt.h"
 
 #include "cereal.hpp"
@@ -17,8 +18,6 @@ namespace polycalc {
 // EVAL if polynomial is in NTT format
 // COEF if polynomial is represented in coefficients
 enum Format { EVAL, COEF };
-
-enum SER_Archive_Type {BIN, JSON};
 
 class Polynomial {
 private:
