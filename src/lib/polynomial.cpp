@@ -90,6 +90,10 @@ void Polynomial::GenerateUniform() {
     GenerateUniformPoly(ax, N, m);  
 }
 
+void Polynomial::GenerateDiscreteGauss() {
+    GenerateDiscreteGaussPoly(ax, N, m);
+}
+
 void Polynomial::SetZero(Format _format) {
     format = _format;
     SetZero();

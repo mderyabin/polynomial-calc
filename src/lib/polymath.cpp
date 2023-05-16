@@ -16,6 +16,17 @@ void GenerateUniformPoly(uint64_t *ax, size_t N, uint64_t m) {
     }
 }
 
+void GenerateDiscreteGaussPoly(uint64_t *ax, size_t N, uint64_t m, double sigma) {
+    std::random_device rd {};
+    std::mt19937 gen {rd()};
+    std::normal_distribution<> d {0, sigma};
+
+    for (size_t i = 0; i < N; i++) { 
+        int64_t t = std::round(d(gen));
+        ax[i] = t >= 0 ? t : m + t;
+    }
+}
+
 void ModAdd(uint64_t *cx, const uint64_t *ax, const uint64_t *bx, size_t N, uint64_t m) {
     for (size_t i = 0; i < N; i++) {
         cx[i] = ModAdd(ax[i], bx[i], m);

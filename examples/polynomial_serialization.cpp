@@ -7,8 +7,8 @@ using namespace polycalc;
 
 int main(int argc, char const *argv[]) {
     // only independent parameters, specified by user
-    size_t logN = 3;
-    size_t logq = 5;
+    size_t logN = 5;
+    size_t logq = 16;
 
     // read parameters from command line (logN first, logq second)
     read_command_line(logN, logq, argc, argv);
@@ -24,7 +24,8 @@ int main(int argc, char const *argv[]) {
     cout << "q = " << q << endl;
 
     Polynomial A(N, q);
-    A.GenerateUniform();
+    //A.GenerateUniform();
+    A.GenerateDiscreteGauss();
     cout << "A(x) = " << A << endl;
 
     A.Serialize("poly.txt", JSON);

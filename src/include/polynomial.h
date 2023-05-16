@@ -79,6 +79,10 @@ public:
     void GenerateUniform(Format _format);
     void GenerateUniform();
 
+    // fill with Discrete Gauss
+    // change format to coeff 
+    void GenerateDiscreteGauss();
+
     // Fill polynomial with zeroes
     void SetZero(Format _format);
     void SetZero();
