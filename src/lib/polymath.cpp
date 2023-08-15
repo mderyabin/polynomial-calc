@@ -210,6 +210,41 @@ void CooleyTukeyForwardNTT(uint64_t *ax, const uint64_t *tf, size_t N, uint64_t 
     }
 }
 
+void ShoupPrecompute(uint64_t *prec_c, const uint64_t *c, size_t n, uint64_t m) {
+    for (size_t i = 0; i < n; i++) {
+        prec_c[i] = ShoupPrecompute(c[i], m);
+    }
+    
+}
+
+void CooleyTukeyForwardNTT(uint64_t *ax, const uint64_t *tf, size_t N, uint64_t m, const uint64_t *prec_tf, size_t logN) {
+    size_t t = N;
+    size_t log1 = logN;
+    uint64_t temp1, u, v, s, s_prec;
+    size_t n, j1, j2, j, i;
+    for (n = 1; n < N; n <<= 1) {
+        t >>= 1;
+        for (i = 0; i < n; i++) {
+            j1 = i << log1;
+            j2 = j1 + t - 1;
+            s = tf[n + i]; 
+            s_prec = prec_tf[n + i]; 
+            for (j = j1; j <= j2; j++) {
+                u = ax[j];
+                v = ax[j + t];
+
+                ModMulShoupEq(v, s, m, s_prec);
+
+                temp1 = u + v;
+                ax[j] = temp1 < m ? temp1 : temp1 - m;
+
+                ax[j + t] = (u > v) ? u - v : m + u - v;
+            }   
+        }
+        log1--;
+    }
+}
+
 // using algorithm from https://eprint.iacr.org/2016/504.pdf
 void GentlemanSandeInverseNTT(uint64_t *ax, const uint64_t *itf, size_t N, uint64_t m, uint64_t invN, uint64_t prec_b, uint64_t prec_s, size_t logm) {
     size_t t = 1;
@@ -232,6 +267,39 @@ void GentlemanSandeInverseNTT(uint64_t *ax, const uint64_t *itf, size_t N, uint6
 
     for (size_t j = 0; j < N; j++) {
         ModMulShoupEq(ax[j], invN, m, prec_s);
+    }
+}
+
+void GentlemanSandeInverseNTT(uint64_t *ax, const uint64_t *itf, size_t N, uint64_t m, uint64_t invN, const uint64_t *prec_itf, uint64_t prec_invN) {
+    size_t t = 1;
+    size_t h, j, i, j1, j2;
+    uint64_t u, v, vv, s, s_prec;
+    for (h = N>>1; h > 0; h >>= 1) {
+        j1 = 0;
+        for (i = 0; i < h; i++) {
+            j2 = j1 + t - 1;
+            s = itf[h + i]; 
+            s_prec = prec_itf[h + i];
+            for (j = j1; j <= j2; j++) {
+                u = ax[j];
+                v = ax[j + t];
+
+                vv = u + v;
+                ax[j] = vv < m ? vv : vv - m;
+
+                v = (u > v) ? u - v : m + u - v;
+
+                ModMulShoupEq(v, s, m, s_prec);
+
+                ax[j+t] = v;
+            }
+            j1 += (t<<1);
+        }
+        t <<= 1;
+    }
+
+    for (size_t j = 0; j < N; j++) {
+        ModMulShoupEq(ax[j], invN, m, prec_invN);
     }
 }
 

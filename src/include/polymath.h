@@ -40,6 +40,11 @@ void NaiveInvNTT(uint64_t *res, const uint64_t *ax, const uint64_t *itf, const u
 void CooleyTukeyForwardNTT(uint64_t *ax, const uint64_t *tf, size_t N, uint64_t m, uint64_t prec, size_t logm);
 void GentlemanSandeInverseNTT(uint64_t *ax, const uint64_t *itf, size_t N, uint64_t m, uint64_t invN, uint64_t prec_b, uint64_t prec_s, size_t logm);
 
+void ShoupPrecompute(uint64_t *prec_c, const uint64_t *c, size_t n, uint64_t m);
+void CooleyTukeyForwardNTT(uint64_t *ax, const uint64_t *tf, size_t N, uint64_t m, const uint64_t *prec_tf, size_t logN);
+void GentlemanSandeInverseNTT(uint64_t *ax, const uint64_t *itf, size_t N, uint64_t m, uint64_t invN, const uint64_t *prec_itf, uint64_t prec_invN);
+
+
 } 
 
 #endif /* __POLYMATH_H__ */

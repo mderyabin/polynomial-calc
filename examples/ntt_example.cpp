@@ -40,9 +40,14 @@ int main(int argc, char const *argv[]) {
     uint64_t *tf_br = new uint64_t[N];
     uint64_t *itf_br = new uint64_t[N];
 
+    uint64_t *prec_tf_br = new uint64_t[N];
+    uint64_t *prec_itf_br = new uint64_t[N];
+
     ComputeTwiddleFactors(tf_br, N, q, false);
     ComputeTwiddleFactors(itf_br, N, q, true);
 
+    ShoupPrecompute(prec_tf_br, tf_br, N, q);
+    ShoupPrecompute(prec_itf_br, itf_br, N, q);
     // for (size_t i = 0; i < N; i++) {
     //     cout << "tf_br[" << i << "] = " << tf_br[i] << endl;
     // }
@@ -65,25 +70,31 @@ int main(int argc, char const *argv[]) {
     NaiveNegacyclicConvolution(D, A, B, N, q);
     printpoly(D, N, "D = naive A*B");
 
-    CooleyTukeyForwardNTT(A, tf_br, N, q, prec, logq);
+    // CooleyTukeyForwardNTT(A, tf_br, N, q, prec, logq);    
+    CooleyTukeyForwardNTT(A, tf_br, N, q, prec_tf_br, logN);
     printvec(A, N, "NTT(A)");
 
-    CooleyTukeyForwardNTT(B, tf_br, N, q, prec, logq);
+    // CooleyTukeyForwardNTT(B, tf_br, N, q, prec, logq);
+    CooleyTukeyForwardNTT(B, tf_br, N, q, prec_tf_br, logN);
     printvec(B, N, "NTT(B)");
 
     ModHadamardMul(C, A, B, N, q);
     printvec(C, N, "NTT(C) = NTT(A) * NTT(B)");
 
-    GentlemanSandeInverseNTT(C, itf_br, N, q, invN, prec, prec_invN, logq);
+    // GentlemanSandeInverseNTT(C, itf_br, N, q, invN, prec, prec_invN, logq);
+    GentlemanSandeInverseNTT(C, itf_br, N, q, invN, prec_itf_br, prec_invN);
     printpoly(C, N, "C = iNTT(NTT(C))");
 
-    CooleyTukeyForwardNTT(D, tf_br, N, q, prec, logq);
+    //CooleyTukeyForwardNTT(D, tf_br, N, q, prec, logq);
+    CooleyTukeyForwardNTT(D, tf_br, N, q, prec_tf_br, logN);
     printvec(D, N, "NTT(D)"); 
 
     delete [] C;
     delete [] D;
     delete [] B;
     delete [] A;
+    delete [] prec_itf_br;
+    delete [] prec_tf_br;
     delete [] itf_br;
     delete [] tf_br;
     return 0;

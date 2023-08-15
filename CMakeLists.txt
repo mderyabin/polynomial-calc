@@ -15,10 +15,35 @@ SET(CMAKE_CXX_FLAGS "-O3 -Wall -frtti -Wextra")
 
 add_subdirectory(src)
 
+
+include(FetchContent)
+find_package(Git REQUIRED)
+set(FETCHCONTENT_QUIET ON)
+set(FETCHCONTENT_UPDATES_DISCONNECTED ON)
+set(BUILD_SHARED_LIBS OFF)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
+
+set(BENCHMARK_ENABLE_GTEST_TESTS OFF CACHE BOOL "" FORCE)
+set(BENCHMARK_ENABLE_TESTING OFF CACHE BOOL "" FORCE)
+FetchContent_Declare(
+        benchmark
+        GIT_REPOSITORY "https://github.com/google/benchmark.git"
+        GIT_TAG aa59d40f8822358d012e854488c2e52857b8a1f0
+        PATCH_COMMAND ""
+)
+FetchContent_MakeAvailable(benchmark)
+
+add_subdirectory(benchmark)
+
+
+
+
+
 file (GLOB EXAMPLES_SRC_FILES CONFIGURE_DEPENDS examples/*.cpp)
 foreach (app ${EXAMPLES_SRC_FILES})
     get_filename_component ( exe ${app} NAME_WE )
     add_executable ( ${exe} ${app} )
-    set_property(TARGET ${exe} PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+    set_property(TARGET ${exe} PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_RUNTIME_OUTPUT_DERICTORY}/examples)
     target_link_libraries(${exe} PUBLIC polymath)
 endforeach()
