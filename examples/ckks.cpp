@@ -1,15 +1,14 @@
 #include <iostream>
-#include "examples_utils.h"
-
 #include "encode.h"
+
+#include "examples_utils.h"
 
 using namespace std;
 using namespace polycalc;
 
 int main(int argc, char const *argv[]) {
-
     // only independent parameters, specified by user
-    size_t logN = 2;
+    size_t logN = 8;
     size_t logq = 20;
 
     size_t slots = 2;
@@ -32,7 +31,6 @@ int main(int argc, char const *argv[]) {
     cout << "q = " << q << endl;
 
 
-
     vector<complex<long double>> a(slots);
     for (size_t i = 0; i < slots; i++) {
         a[i] = complex<long double>(generaternd(-5.0,5.0),  generaternd(-5.0,5.0));
@@ -45,45 +43,17 @@ int main(int argc, char const *argv[]) {
 
     Polynomial ra = encode(a, N, q, scale);
 
-    vector<complex<long double>> b(slots);
-    for (size_t i = 0; i < slots; i++) {
-        b[i] = complex<long double>(generaternd(-5.0,5.0),  generaternd(-5.0,5.0));
-    }
-
-    cout << "input b: ";
-    for (size_t i = 0; i < b.size(); i++)
-        cout << b[i] << " ";
-    cout << endl;
-
-    Polynomial rb = encode(b, N, q, scale);
-
     cout << "encoded polynomial for a: ";
     cout << ra << endl;
-    cout << "encoded polynomial for b: ";
-    cout << rb << endl;
 
-    ra.SetFormatEval();
-    rb.SetFormatEval();
+    vector<complex<long double>> aa = decode(ra, scale);
 
-    Polynomial rc = ra * rb;
-
-    rc.SetFormatCoef();
-
-    cout << "polynomial for c = a*b: ";
-    cout << rc << endl;
-
-    vector<complex<long double>> c = decode(rc, scale*scale);
-
-    cout << "c = a*b after decode: ";
-    for (size_t i = 0; i < slots; i++)
-        cout << c[i] << " ";
-    cout << endl;
-
-    cout << "a*b check: ";
-    for (size_t i = 0; i < a.size(); i++)
-        cout << a[i]*b[i] << " ";
+    cout << "a check: ";
+    for (size_t i = 0; i < aa.size(); i++)
+        cout << aa[i] << " ";
     cout << endl;
 
     return 0;
 }
+
 

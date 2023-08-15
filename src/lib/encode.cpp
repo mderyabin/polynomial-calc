@@ -72,12 +72,14 @@ cvector ComplexRootsOfUnity(size_t N) {
 
 // example can be found in https://eprint.iacr.org/2016/421.pdf (section 3.2)
 Polynomial encode(cvector values, size_t N, uint64_t m, uint64_t scale) {
-    Polynomial result(N, m, true); 
+    size_t pow = values.size() * 2;
+
+    Polynomial result(pow, m, true); 
 
     cvector domain = ComplexRootsOfUnity(N);
 
-    cvector vals(N);
-    for (size_t i = 0; i < N/2; i++){
+    cvector vals(pow);
+    for (size_t i = 0; i < pow/2; i++) {
         vals[i] = values[i];
         vals[N - i - 1].real(values[i].real());
         vals[N - i - 1].imag(-values[i].imag());
@@ -86,15 +88,15 @@ Polynomial encode(cvector values, size_t N, uint64_t m, uint64_t scale) {
     cvector lagrange;
     cvector tmp, mono(2);
 
-    tmp.reserve(N);
-    lagrange.reserve(N);
+    tmp.reserve(pow);
+    lagrange.reserve(pow);
     lagrange.resize(1);
     lagrange[0] = ZERO;
     cdouble c;
-    for (size_t i = 0; i < N; i++) {
+    for (size_t i = 0; i < pow; i++) {
         tmp.resize(1);
         tmp[0] = ONE;
-        for (size_t j = 0; j < N; j++) {
+        for (size_t j = 0; j < pow; j++) {
             if (i != j) {
                 c = domain[i] - domain[j];
                 mono[1] = ONE / c;
@@ -110,7 +112,7 @@ Polynomial encode(cvector values, size_t N, uint64_t m, uint64_t scale) {
     }
 
     long double s = static_cast<long double>(scale);
-    for (size_t i = 0; i < N; i++) {
+    for (size_t i = 0; i < pow; i++) {
         long double a = round(s * lagrange[i].real());
         uint64_t ua = (a >= 0) ? static_cast<uint64_t>(a)%m : m - (static_cast<uint64_t>(-a))%m;
         result[i] = ua;

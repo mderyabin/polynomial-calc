@@ -1,5 +1,15 @@
 #include <iostream>
 #include <string>
+#include <random>
+#include <vector>
+#include <complex>
+
+long double generaternd(long double a, long double b) {
+    std::random_device rd;
+    std::uniform_real_distribution<long double> dist(a, b);
+    std::default_random_engine en(rd());
+    return dist(en);
+}
 
 void read_command_line(size_t &logN, size_t &logq, int argc, char const *argv[]) {
     if (argc == 1) {
