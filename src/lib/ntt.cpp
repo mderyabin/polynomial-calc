@@ -14,6 +14,7 @@ NTT::NTT(size_t _N, uint64_t _m) : N(_N), m(_m) {
     itf = new uint64_t[N];
 
     logm = MSB(m);
+    logN = MSB(N)-1;
 
     invN = ModInvPrime(N, m);
 
@@ -29,30 +30,42 @@ NTT::NTT(size_t _N, uint64_t _m) : N(_N), m(_m) {
     // combines powers of inversion of N-th root of unity for INTT with powers of inversion of 2N-th root for INWC
     // stored in bit-reversed order
     ComputeTwiddleFactors(itf, N, m, true);
+
+    prec_tf = new uint64_t[N];
+    prec_itf = new uint64_t[N];
+
+    ShoupPrecompute(prec_tf, tf, N, m);
+    ShoupPrecompute(prec_itf, itf, N, m);
 }
 
 NTT::~NTT() {
     if (tf) delete [] tf;
     if (itf) delete [] itf;
+    if (itf) delete [] prec_tf;
+    if (itf) delete [] prec_itf;
 }
 
 
 void NTT::ComputeForward(uint64_t *ax) {
-    CooleyTukeyForwardNTT(ax, tf, N, m, prec, logm);
+    // CooleyTukeyForwardNTT(ax, tf, N, m, prec, logm);
+    CooleyTukeyForwardNTT(ax, tf, N, m, prec_tf, logN);
 }
 
 void NTT::ComputeForward(uint64_t *res, const uint64_t *ax){
     copy(ax, ax + N, res);
-    CooleyTukeyForwardNTT(res, tf, N, m, prec, logm); // change function to avoid copy and gain performance
+    //CooleyTukeyForwardNTT(res, tf, N, m, prec, logm); // change function to avoid copy and gain performance
+    CooleyTukeyForwardNTT(res, tf, N, m, prec_tf, logN);
 }
 
 void NTT::ComputeInverse(uint64_t *ax){
-    GentlemanSandeInverseNTT(ax, itf, N, m, invN, prec, prec_invN, logm);
+    // GentlemanSandeInverseNTT(ax, itf, N, m, invN, prec, prec_invN, logm);
+    GentlemanSandeInverseNTT(ax, itf, N, m, invN, prec_itf, prec_invN);
 }
 
 void NTT::ComputeInverse(uint64_t *res, const uint64_t *ax) {
     copy(ax, ax + N, res);
-    GentlemanSandeInverseNTT(res, itf, N, m, invN, prec, prec_invN, logm); // change function to avoid copy and gain performance
+    // GentlemanSandeInverseNTT(res, itf, N, m, invN, prec, prec_invN, logm); // change function to avoid copy and gain performance
+    GentlemanSandeInverseNTT(res, itf, N, m, invN, prec_itf, prec_invN);
 }
 
 map<pair<size_t, uint64_t>, shared_ptr<NTT>> NTTManager::ntt_map = map<pair<size_t, uint64_t>, shared_ptr<NTT>>();

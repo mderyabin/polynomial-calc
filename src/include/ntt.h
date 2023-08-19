@@ -27,12 +27,16 @@ namespace polycalc {
 class NTT {
 private:
     size_t N;           // ring dimensions
+    size_t logN;
     uint64_t m;         // modulus
 
     uint64_t invN;      // inversion of N
 
     uint64_t *tf;       // twiddle factors for forward transform
     uint64_t *itf;      // twiddle factors for inverse transform
+
+    uint64_t *prec_tf;  // constants precomputed for Shoup mult for each tf
+    uint64_t *prec_itf; // constants precomputed for Shoup mult for each itf
 
     size_t logm;        // bitsize of modulus
     uint64_t prec;      // precomputed constant for Barrett multiplication
