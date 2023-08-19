@@ -28,7 +28,7 @@ int main(int argc, char const *argv[]) {
     uint64_t q = FindFirstPrimeUp(logq, M);
     cout << "q = " << q << endl;
 
-    uint64_t prec = BarrettPrecompute(q, logq);
+    // uint64_t prec = BarrettPrecompute(q, logq);
 
     uint64_t invN = ModInvPrime(N, q);
     uint64_t prec_invN = ShoupPrecompute(invN, q);

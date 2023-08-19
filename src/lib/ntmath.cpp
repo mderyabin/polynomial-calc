@@ -6,8 +6,6 @@ using namespace std;
 
 namespace polycalc {
 
-typedef unsigned __int128 uint128_t;
-
 size_t MSB(uint64_t t) {
     size_t msb = 0;
     while (t > 0) {
@@ -75,24 +73,24 @@ uint64_t ModMultBarrett(uint64_t a, uint64_t b, uint64_t m, uint64_t prec, size_
 }
 
 
-void ModMultBarrettEq(uint64_t &a, uint64_t b, uint64_t m, uint64_t prec, size_t logm) {
+// void ModMultBarrettEq(uint64_t &a, uint64_t b, uint64_t m, uint64_t prec, size_t logm) {
 
-    if (logm == 0) logm = MSB(m);
-    if (prec == 0) prec = BarrettPrecompute(m, logm);
+//     if (logm == 0) logm = MSB(m);
+//     if (prec == 0) prec = BarrettPrecompute(m, logm);
 
-    uint128_t mul = static_cast<uint128_t>(a) * b;
+//     uint128_t mul = static_cast<uint128_t>(a) * b;
 
-    uint128_t tmp1 = mul;
-    uint128_t tmp2 = tmp1 >> (logm-2);
+//     uint128_t tmp1 = mul;
+//     uint128_t tmp2 = tmp1 >> (logm-2);
 
-    tmp1 = tmp2 * prec;
-    tmp2 = tmp1 >> (logm + 5);
-    tmp1 = tmp2 * m;
+//     tmp1 = tmp2 * prec;
+//     tmp2 = tmp1 >> (logm + 5);
+//     tmp1 = tmp2 * m;
 
-    a = static_cast<uint64_t>(mul - tmp1);
+//     a = static_cast<uint64_t>(mul - tmp1);
 
-    while (a >= m) a -= m;
-}
+//     while (a >= m) a -= m;
+// }
 
 //*/
 
@@ -152,15 +150,15 @@ uint64_t ModMulShoup(uint64_t a, uint64_t c, uint64_t m, uint64_t prec) {
     return res;
 }
 
-void ModMulShoupEq(uint64_t &a, uint64_t c, uint64_t m, uint64_t prec) {
-    uint128_t aa  = static_cast<uint128_t>(a);
-    uint128_t mul = aa * c;
-    uint128_t tmp = ((aa * prec) >> 64) * m;
+// void ModMulShoupEq(uint64_t &a, uint64_t c, uint64_t m, uint64_t prec) {
+//     uint128_t aa  = static_cast<uint128_t>(a);
+//     uint128_t mul = aa * c;
+//     uint128_t tmp = ((aa * prec) >> 64) * m;
 
-    a = static_cast<uint64_t>(mul - tmp);  // mod 2^64
+//     a = static_cast<uint64_t>(mul - tmp);  // mod 2^64
 
-    if (a >= m) a -= m;
-}
+//     if (a >= m) a -= m;
+// }
 
 
 uint64_t ModExp(uint64_t a, uint64_t e, uint64_t m, uint64_t prec, size_t logm) {
