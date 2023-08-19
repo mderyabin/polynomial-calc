@@ -108,14 +108,14 @@ void ComputeTwiddleFactors(uint64_t *tf, size_t N, uint64_t m, bool isinverse) {
     uint64_t *tf_direct = new uint64_t[N];
     size_t logN = MSB(N) - 1;
 
-    uint64_t gg = ModMult(g, g, m);
-    gg = ModMult(gg, g, m);
+    // uint64_t gg = ModMult(g, g, m);
+    // gg = ModMult(gg, g, m);
 
-    uint64_t prec = ShoupPrecompute(gg, m);
+    uint64_t prec = ShoupPrecompute(g, m);
 
     tf_direct[0] = 1;
     for (size_t i = 1; i < N; i++) {
-        tf_direct[i] = ModMulShoup(tf_direct[i-1], gg, m, prec);
+        tf_direct[i] = ModMulShoup(tf_direct[i-1], g, m, prec);
     }
 
     for (size_t i = 0; i < N; i++) {
@@ -218,18 +218,17 @@ void ShoupPrecompute(uint64_t *prec_c, const uint64_t *c, size_t n, uint64_t m) 
 }
 
 void CooleyTukeyForwardNTT(uint64_t *ax, const uint64_t *tf, size_t N, uint64_t m, const uint64_t *prec_tf, size_t logN) {
-    size_t t = N;
+    size_t t = N >> 1;
     size_t log1 = logN;
     uint64_t temp1, u, v, s, s_prec;
     size_t n, j1, j2, j, i;
     for (n = 1; n < N; n <<= 1) {
-        t >>= 1;
         for (i = 0; i < n; i++) {
             j1 = i << log1;
-            j2 = j1 + t - 1;
+            j2 = j1 + t;
             s = tf[n + i]; 
             s_prec = prec_tf[n + i]; 
-            for (j = j1; j <= j2; j++) {
+            for (j = j1; j < j2; j++) {
                 u = ax[j];
                 v = ax[j + t];
 
@@ -241,6 +240,7 @@ void CooleyTukeyForwardNTT(uint64_t *ax, const uint64_t *tf, size_t N, uint64_t 
                 ax[j + t] = (u > v) ? u - v : m + u - v;
             }   
         }
+        t >>= 1;
         log1--;
     }
 }
@@ -272,15 +272,16 @@ void GentlemanSandeInverseNTT(uint64_t *ax, const uint64_t *itf, size_t N, uint6
 
 void GentlemanSandeInverseNTT(uint64_t *ax, const uint64_t *itf, size_t N, uint64_t m, uint64_t invN, const uint64_t *prec_itf, uint64_t prec_invN) {
     size_t t = 1;
+    size_t log1 = 1;
     size_t h, j, i, j1, j2;
     uint64_t u, v, vv, s, s_prec;
-    for (h = N>>1; h > 0; h >>= 1) {
-        j1 = 0;
+    for (h = (N>>1); h >= 1; h >>= 1) {
         for (i = 0; i < h; i++) {
-            j2 = j1 + t - 1;
+            j1 = i << log1;
+            j2 = j1 + t;
             s = itf[h + i]; 
             s_prec = prec_itf[h + i];
-            for (j = j1; j <= j2; j++) {
+            for (j = j1; j < j2; j++) {
                 u = ax[j];
                 v = ax[j + t];
 
@@ -293,9 +294,9 @@ void GentlemanSandeInverseNTT(uint64_t *ax, const uint64_t *itf, size_t N, uint6
 
                 ax[j+t] = v;
             }
-            j1 += (t<<1);
         }
         t <<= 1;
+        log1++;
     }
 
     for (size_t j = 0; j < N; j++) {

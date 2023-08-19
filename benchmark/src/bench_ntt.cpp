@@ -1,8 +1,5 @@
 #include "benchmark/benchmark.h"
 
-#include <iostream>
-using namespace std;
-
 #include "polymath.h"
 
 using namespace polycalc;
