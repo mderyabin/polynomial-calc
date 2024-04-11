@@ -83,6 +83,8 @@ public:
     // change format to coeff 
     void GenerateDiscreteGauss();
 
+    void GenerateBinary();
+
     // Fill polynomial with zeroes
     void SetZero(Format _format);
     void SetZero();
@@ -103,6 +105,8 @@ public:
     /*********************/
 
     /****** arithmetics ******/   
+    void NegateInPlace();
+
     friend const Polynomial operator+(const Polynomial& left, const Polynomial& right);
     friend const Polynomial& operator+=(Polynomial& left, const Polynomial& right);
     friend const Polynomial& operator+(const Polynomial& Polynomial) {return Polynomial; }

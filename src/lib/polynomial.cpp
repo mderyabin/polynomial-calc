@@ -94,6 +94,10 @@ void Polynomial::GenerateDiscreteGauss() {
     GenerateDiscreteGaussPoly(ax, N, m);
 }
 
+void Polynomial::GenerateBinary() {
+    GenerateBinaryPoly(ax, N);  
+}
+
 void Polynomial::SetZero(Format _format) {
     format = _format;
     SetZero();

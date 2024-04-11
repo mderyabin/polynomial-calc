@@ -16,6 +16,16 @@ void GenerateUniformPoly(uint64_t *ax, size_t N, uint64_t m) {
     }
 }
 
+void GenerateBinaryPoly(uint64_t *ax, size_t N) {
+    std::random_device rd;
+    std::default_random_engine en(rd());
+    std::uniform_int_distribution<int> rnd(0, 1);
+
+    for (size_t i = 0; i < N; i++) { 
+        ax[i] = rnd(en);
+    }
+}
+
 void GenerateDiscreteGaussPoly(uint64_t *ax, size_t N, uint64_t m, double sigma) {
     std::random_device rd {};
     std::mt19937 gen {rd()};

@@ -17,6 +17,7 @@ namespace polycalc {
 
 void GenerateUniformPoly(uint64_t *ax, size_t N, uint64_t m);
 void GenerateDiscreteGaussPoly(uint64_t *ax, size_t N, uint64_t m, double sigma = 3.19);
+void GenerateBinaryPoly(uint64_t *ax, size_t N);
 
 void ModAdd(uint64_t *cx, const uint64_t *ax, const uint64_t *bx, size_t N, uint64_t m);
 void ModAdd(uint64_t *ax, const uint64_t *bx, size_t N, uint64_t m);
