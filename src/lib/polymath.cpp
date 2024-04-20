@@ -37,6 +37,18 @@ void GenerateDiscreteGaussPoly(uint64_t *ax, size_t N, uint64_t m, double sigma)
     }
 }
 
+void ModNegate(uint64_t *ax, size_t N, uint64_t m) {
+    for (size_t i = 0; i < N; i++) {
+        ModNegateEq(ax[i], m);
+    }
+}
+
+void ModNegate(uint64_t *cx, uint64_t *ax, size_t N, uint64_t m) {
+    for (size_t i = 0; i < N; i++) {
+        cx[i] = ModNegate(ax[i], m);
+    }
+}
+
 void ModAdd(uint64_t *cx, const uint64_t *ax, const uint64_t *bx, size_t N, uint64_t m) {
     for (size_t i = 0; i < N; i++) {
         cx[i] = ModAdd(ax[i], bx[i], m);
@@ -46,6 +58,44 @@ void ModAdd(uint64_t *cx, const uint64_t *ax, const uint64_t *bx, size_t N, uint
 void ModAdd(uint64_t *ax, const uint64_t *bx, size_t N, uint64_t m) {
     for (size_t i = 0; i < N; i++) {
         ModAddEq(ax[i], bx[i], m);
+    }
+}
+
+void ModSub(uint64_t *cx, const uint64_t *ax, const uint64_t *bx, size_t N, uint64_t m) {
+    for (size_t i = 0; i < N; i++) {
+        cx[i] = ModSub(ax[i], bx[i], m);
+    }
+}
+
+void ModSub(uint64_t *ax, const uint64_t *bx, size_t N, uint64_t m) {
+    for (size_t i = 0; i < N; i++) {
+        ModSubEq(ax[i], bx[i], m);
+    }
+}
+
+void ModMul(uint64_t *cx, const uint64_t *ax, const uint64_t b, size_t N, uint64_t m) {
+    uint64_t prec = ShoupPrecompute(b, m); 
+    for (size_t i = 0; i < N; i++) {
+        cx[i] = ModMulShoup(ax[i], b, m, prec);
+    }
+}
+
+void ModMul(uint64_t *cx, const uint64_t *ax, const uint64_t b, size_t N, uint64_t m, uint64_t mu, size_t logm) {
+    for (size_t i = 0; i < N; i++) {
+        cx[i] = ModMultBarrett(ax[i], b, m, mu, logm);
+    }
+}
+
+void ModMul(uint64_t *ax, const uint64_t b, size_t N, uint64_t m) {
+    uint64_t prec = ShoupPrecompute(b, m); 
+    for (size_t i = 0; i < N; i++) {
+        ModMulShoupEq(ax[i], b, m, prec);
+    }
+}
+
+void ModMul(uint64_t *ax, const uint64_t b, size_t N, uint64_t m, uint64_t mu, size_t logm) {
+    for (size_t i = 0; i < N; i++) {
+        ModMultBarrettEq(ax[i], b, m, mu, logm);
     }
 }
 

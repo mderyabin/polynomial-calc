@@ -19,8 +19,20 @@ void GenerateUniformPoly(uint64_t *ax, size_t N, uint64_t m);
 void GenerateDiscreteGaussPoly(uint64_t *ax, size_t N, uint64_t m, double sigma = 3.19);
 void GenerateBinaryPoly(uint64_t *ax, size_t N);
 
+void ModNegate(uint64_t *ax, size_t N, uint64_t m);
+void ModNegate(uint64_t *cx, uint64_t *ax, size_t N, uint64_t m);
+
 void ModAdd(uint64_t *cx, const uint64_t *ax, const uint64_t *bx, size_t N, uint64_t m);
 void ModAdd(uint64_t *ax, const uint64_t *bx, size_t N, uint64_t m);
+
+void ModSub(uint64_t *cx, const uint64_t *ax, const uint64_t *bx, size_t N, uint64_t m);
+void ModSub(uint64_t *ax, const uint64_t *bx, size_t N, uint64_t m);
+
+void ModMul(uint64_t *cx, const uint64_t *ax, const uint64_t b, size_t N, uint64_t m);
+void ModMul(uint64_t *ax, const uint64_t b, size_t N, uint64_t m);
+
+void ModMul(uint64_t *cx, const uint64_t *ax, const uint64_t b, size_t N, uint64_t m, uint64_t mu, size_t logm);
+void ModMul(uint64_t *ax, const uint64_t b, size_t N, uint64_t m, uint64_t mu, size_t logm);
 
 void ModHadamardMul(uint64_t *cx, const uint64_t *ax, const uint64_t *bx, size_t N, uint64_t m, uint64_t prec = 0, size_t logm = 0);
 void ModHadamardMul(uint64_t *ax, const uint64_t *bx, size_t N, uint64_t m, uint64_t prec = 0, size_t logm = 0);

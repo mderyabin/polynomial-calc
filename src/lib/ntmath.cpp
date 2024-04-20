@@ -15,6 +15,13 @@ size_t MSB(uint64_t t) {
     return msb;
 }
 
+uint64_t ModNegate(const uint64_t a, const uint64_t m) {
+    return m - a;
+}
+void ModNegateEq(uint64_t &a, const uint64_t m) {
+    a = (m - a);
+}
+
 uint64_t ModAdd(const uint64_t a, const uint64_t b, const uint64_t m) {
     uint64_t c = a + b;
     return (c >= m) ? c - m : c;

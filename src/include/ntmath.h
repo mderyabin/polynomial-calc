@@ -22,6 +22,9 @@ typedef unsigned __int128 uint128_t;
 
 size_t MSB(uint64_t t);
 
+uint64_t ModNegate(const uint64_t a, const uint64_t m);
+void ModNegateEq(uint64_t &a, const uint64_t m);
+
 // return a + b mod m
 uint64_t ModAdd(const uint64_t a, const uint64_t b, const uint64_t m);
 void ModAddEq(uint64_t &a, const uint64_t b, const uint64_t m);

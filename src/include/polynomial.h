@@ -106,13 +106,23 @@ public:
 
     /****** arithmetics ******/   
     void NegateInPlace();
+    Polynomial Negate();
 
     friend const Polynomial operator+(const Polynomial& left, const Polynomial& right);
     friend const Polynomial& operator+=(Polynomial& left, const Polynomial& right);
     friend const Polynomial& operator+(const Polynomial& Polynomial) {return Polynomial; }
 
+    friend const Polynomial operator-(const Polynomial& left, const Polynomial& right);
+    friend const Polynomial& operator-=(Polynomial& left, const Polynomial& right);
+    friend const Polynomial operator-(const Polynomial& Polynomial);
+
     friend const Polynomial operator*(const Polynomial& left, const Polynomial& right);
     friend const Polynomial& operator*=(Polynomial& left, const Polynomial& right);
+
+    friend const Polynomial operator*(const Polynomial& poly, const uint64_t& c);
+    friend const Polynomial operator*(const uint64_t& c, const Polynomial& poly);
+    friend const Polynomial& operator*=(Polynomial& poly, const uint64_t& c);
+    
     /*************************/
 
     /****** input and output ******/

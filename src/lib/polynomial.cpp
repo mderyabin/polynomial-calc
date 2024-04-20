@@ -133,6 +133,7 @@ ostream& operator<<(ostream& os, const Polynomial& polynomial) {
     
     if (polynomial.format == COEF) {
         bool printplus = false;
+        bool iszero = true;
         if (N >=1 ) {
             for (size_t i = 0; i < N; i++) {
                 if (ax[i] != 0) {
@@ -140,7 +141,11 @@ ostream& operator<<(ostream& os, const Polynomial& polynomial) {
                     else printplus = true;
                     if (ax[i] != 1 || i == 0) os << ax[i]; 
                     if (i != 0) os << "X^" << i;
+                    iszero = false;
                 }
+            }
+            if (iszero) {
+                os << 0;
             }
         } else {
             os << 0;
@@ -170,6 +175,16 @@ void Polynomial::SetFormatCoef() {
     }
 }
 
+void Polynomial::NegateInPlace() {
+    ModNegate(ax, N, m);
+}
+
+Polynomial Polynomial::Negate() {
+    Polynomial res(*this);
+    res.NegateInPlace();
+    return res;
+}
+
 const Polynomial& operator+=(Polynomial& left, const Polynomial& right) {
     if (left.m != right.m || left.N != right.N)
         throw runtime_error("Parameters mismatched in addition");
@@ -182,6 +197,26 @@ const Polynomial operator+(const Polynomial& left, const Polynomial& right) {
         throw runtime_error("Parameters mismatched in addition");
     Polynomial res(left);
     return (res += right);
+}
+
+const Polynomial& operator-=(Polynomial& left, const Polynomial& right) {
+    if (left.m != right.m || left.N != right.N)
+        throw runtime_error("Parameters mismatched in addition");
+    ModSub(left.ax, right.ax, left.N, left.m);
+    return left;
+}
+
+const Polynomial operator-(const Polynomial& left, const Polynomial& right) {
+    if (left.m != right.m || left.N != right.N)
+        throw runtime_error("Parameters mismatched in addition");
+    Polynomial res(left);
+    return (res -= right);
+}
+
+const Polynomial operator-(const Polynomial& poly) {
+    Polynomial res(poly);
+    res.NegateInPlace();
+    return res;
 }
 
 const Polynomial operator*(const Polynomial& left, const Polynomial& right) {
@@ -212,6 +247,23 @@ const Polynomial& operator*=(Polynomial& left, const Polynomial& right) {
     } else 
         throw runtime_error("Formats mismatched in multiplication");
     return left;
+}
+
+const Polynomial operator*(const Polynomial& poly, const uint64_t& c) {
+    Polynomial res(poly);
+    ModMul(res.ax, c, res.N, res.m);
+    return res;
+}
+
+const Polynomial operator*(const uint64_t& c, const Polynomial& poly) {
+    Polynomial res(poly);
+    ModMul(res.ax, c, res.N, res.m);
+    return res;
+}
+
+const Polynomial& operator*=(Polynomial& poly, const uint64_t& c) {
+    ModMul(poly.ax, c, poly.N, poly.m);
+    return poly;
 }
 
 // order: format (0 for EVAL and 1 for COEF), N, m, logm, mu, ax[i]
