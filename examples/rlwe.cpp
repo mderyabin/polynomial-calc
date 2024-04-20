@@ -59,10 +59,18 @@ int main(int argc, char const *argv[]) {
     cout << "b(x) = " << b << endl;
 
     
-    // Polynomial dec_m(N, q);
+    Polynomial dec_dm(N, q);
 
-    // dec_m = b - a*s;
-    // cout << "dec_m(x) = " << dec_m << endl;
+    dec_dm = b - a*s;
+    cout << "dec_dm(x) = " << dec_dm << endl;
+
+    Polynomial dec_m(N, q);
+
+    for (size_t i = 0; i < N; i++) {
+        dec_m[i] = static_cast<uint64_t>(round( static_cast<double>(dec_dm[i]) / (1.0*delta) )); 
+    }
+    
+    cout << "dec_m(x) = " << dec_m << endl;
 
     return 0;
 }
