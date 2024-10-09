@@ -12,9 +12,16 @@ include_directories(${CMAKE_SOURCE_DIR}/external/cereal/include)
 include_directories(${CMAKE_SOURCE_DIR}/external/cereal/include/cereal)
 
 SET(CMAKE_CXX_FLAGS "-O3 -Wall -frtti -Wextra")
+include_directories("/opt/homebrew/include")
+link_directories("/opt/homebrew/lib/")
 
 add_subdirectory(src)
 
+# SET(RUN_HAVE_STD_REGEX 0)
+# SET(RUN_HAVE_POSIX_REGEX 0)
+# SET(HAVE_STEADY_CLOCK 0)
+# SET(HAVE_POSIX_REGEX 0)
+# SET(CMAKE_CROSSCOMPILING 1)
 
 include(FetchContent)
 find_package(Git REQUIRED)
@@ -35,9 +42,6 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(benchmark)
 
 add_subdirectory(benchmark)
-
-
-
 
 
 file (GLOB EXAMPLES_SRC_FILES CONFIGURE_DEPENDS examples/*.cpp)
