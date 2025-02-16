@@ -18,6 +18,8 @@
 
 namespace polycalc {
 
+
+
 /**
  * @brief High level wrapper for NTT/INTT transformations.
  * 
@@ -45,6 +47,14 @@ private:
 public:
     NTT(size_t _N, uint64_t _m);
     ~NTT();
+
+    const uint64_t GetModulus() { return m; }
+    const size_t GetN() { return N; }
+    const size_t GetLogN() { return logN; }
+    const size_t GetLogModulus() { return logm; }
+    const size_t GetPrecBarrett() { return prec; }
+    const size_t GetPrecShoup() { return prec_invN; }
+    const size_t GetInvN() { return invN; }
 
     /**
      * @brief In-place forward NTT.
@@ -77,6 +87,7 @@ public:
     void ComputeInverse(uint64_t *res, const uint64_t *ax);
 };
 
+typedef std::shared_ptr<NTT> NTTInstance;
 
 /**
  * @brief Manager for NTT classes for different moduli.
@@ -89,7 +100,7 @@ private:
 
     // Internal map of NTT classes.
     // Each entity in the map corresponds to particular pair N and m.
-    static std::map<std::pair<size_t, uint64_t>, std::shared_ptr<NTT>> ntt_map;
+    static std::map<std::pair<size_t, uint64_t>, NTTInstance> ntt_map;
 public:
 
     /**
@@ -102,7 +113,7 @@ public:
      * @param m modulus
      * @return shared pointer to the objet of NTT class
      */
-    static std::shared_ptr<NTT> GetNTTPtr(size_t N, uint64_t m);
+    static NTTInstance GetNTTPtr(size_t N, uint64_t m);
 };
 
 }

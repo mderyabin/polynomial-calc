@@ -68,8 +68,8 @@ void NTT::ComputeInverse(uint64_t *res, const uint64_t *ax) {
     GentlemanSandeInverseNTT(res, itf, N, m, invN, prec_itf, prec_invN);
 }
 
-map<pair<size_t, uint64_t>, shared_ptr<NTT>> NTTManager::ntt_map = map<pair<size_t, uint64_t>, shared_ptr<NTT>>();
-shared_ptr<NTT> NTTManager::GetNTTPtr(size_t N, uint64_t m) {
+map<pair<size_t, uint64_t>, NTTInstance> NTTManager::ntt_map = map<pair<size_t, uint64_t>, NTTInstance>();
+NTTInstance NTTManager::GetNTTPtr(size_t N, uint64_t m) {
     if (N != (1<<(MSB(N)-1))) throw invalid_argument("dimension is invalid");
     if (!IsPrime(m) || (m % (2*N) != 1)) throw invalid_argument("modulus is invalid");
 
@@ -77,12 +77,12 @@ shared_ptr<NTT> NTTManager::GetNTTPtr(size_t N, uint64_t m) {
 
     auto ntt_search = NTTManager::ntt_map.find(Nmpair);
 
-    shared_ptr<NTT> ntt;
+    NTTInstance ntt;
     if (ntt_search != NTTManager::ntt_map.end()) {
         ntt = ntt_search->second;
     }  else {
         ntt = make_shared<NTT>(N, m);
-        pair<pair<size_t, uint64_t>, shared_ptr<NTT>> p(Nmpair, ntt);
+        pair<pair<size_t, uint64_t>, NTTInstance> p(Nmpair, ntt);
         NTTManager::ntt_map.insert(p);
     }
 
