@@ -1,6 +1,7 @@
 #include "vectbigint.h"
 
 using namespace std;
+using namespace NTL;
 
 namespace polycalc {
 
@@ -336,6 +337,154 @@ void QMul(uint64_t *cx, const uint64_t *ax, const uint64_t *bx, NTTInstance ntt)
     ModHadamardMul(cx_ntt, ax_ntt, bx_ntt, N, m, prec, logm);
 
     ntt->ComputeInverse(cx, cx_ntt);
+}
+
+void QMul(uint64_t *cx, const uint64_t *bx, NTTInstance ntt) {
+    size_t N = ntt->GetN();
+    uint64_t m = ntt->GetModulus();
+    size_t logm = ntt->GetLogModulus();
+    uint64_t prec = ntt->GetPrecBarrett();
+
+    uint64_t ax_ntt[N];
+    uint64_t bx_ntt[N];
+    uint64_t cx_ntt[N];
+
+    ntt->ComputeForward(ax_ntt, cx);
+    ntt->ComputeForward(bx_ntt, bx);
+
+    ModHadamardMul(cx_ntt, ax_ntt, bx_ntt, N, m, prec, logm);
+
+    ntt->ComputeInverse(cx, cx_ntt);
+}
+
+void REDC_In(uint64_t *cx, const uint64_t *ax, const uint64_t *rsx, const uint64_t *mx, uint64_t mu, size_t r_bits, size_t s, size_t N, NTTInstance ntt) {
+    QMul(cx, ax, rsx, ntt);
+    REDC(cx, mx, mu, r_bits, s, N);
+}
+
+void REDC_In(uint64_t *cx, const uint64_t *rsx, const uint64_t *mx, uint64_t mu, size_t r_bits, size_t s, size_t N, NTTInstance ntt) {
+    QMul(cx, rsx, ntt);
+    REDC(cx, mx, mu, r_bits, s, N);
+}
+
+void REDC_Out(uint64_t *cx, const uint64_t *mx, uint64_t mu, size_t r_bits, size_t s, size_t N) {
+    REDC(cx, mx, mu, r_bits, s, N);
+}
+
+void REDC_Out(uint64_t *cx, const uint64_t *ax, const uint64_t *mx, uint64_t mu, size_t r_bits, size_t s, size_t N) {
+    copy(ax, ax+N, cx);
+    REDC(cx, mx, mu, r_bits, s, N);
+}
+
+void REDC(uint64_t *cx, const uint64_t *mx, uint64_t mu, size_t r_bits, size_t s, size_t N) {
+    size_t r_blocks = r_bits / s;
+    uint64_t b_mask = (1ULL << s) - 1;
+
+    uint64_t tx[N];
+    uint64_t tmp[N];
+
+    copy(cx, cx+N, tx);
+
+    uint64_t carry = 0;
+    uint64_t x, qi;
+
+    for (size_t i = 0; i < r_blocks; i++) {
+        // carry = 0;
+        qi = (tx[i] * mu) & b_mask;
+
+        MulLazy(tmp, mx, qi, N - r_blocks);
+        AddLazy(tx + i, tmp, N - r_blocks);
+        CarryPropagation(tx + i, N-i, s);
+
+        // for (size_t j = 0; j < N - r_blocks; j++) {
+        //     x = tx[i+j] + qi*mx[j] + carry;
+        //     tx[i+j] = x & b_mask;
+        //     carry = (x >> s);
+        // }
+
+        // for (size_t j = N - r_blocks; j < N - i; j++) {
+        //     x = tx[i+j] + carry;
+        //     tx[i+j] = x & b_mask;
+        //     carry = (x >> s);
+        // }
+    }
+
+    fill(cx, cx+N, 0);
+    for (size_t i = 0; i < N - r_blocks; i++) {
+        cx[i] = tx[r_blocks + i];
+    } 
+}
+
+void FastModExpREDC(uint64_t *cx, const uint64_t *ax, const uint64_t *ex, const uint64_t *mx, const uint64_t *rsx, uint64_t mu, size_t r_bits, size_t n, size_t s, NTTInstance ntt) { 
+
+    uint64_t *base = new uint64_t[n];
+    // uint64_t *base = globalMemPool.base;
+
+    copy(ax, ax+n, base);
+    REDC_In(base, rsx, mx, mu, r_bits, s, n, ntt);
+
+    bool flag = false;
+
+    size_t emsb = 0;
+    for (size_t i = 0; i < n; i++) {
+        if (ex[i] != 0) emsb = i;
+    }
+    emsb++;
+
+    for (size_t i = 0; i < emsb*s; i++) {
+        size_t j = i/s;
+        size_t k = i%s;
+
+
+        if ((ex[j] >> k)%2 == 1) {
+            if (flag) { 
+                QMul(cx, base, ntt);
+                CarryPropagation(cx, n, s);
+                REDC(cx, mx, mu, r_bits, s, n);
+            } else {
+                copy(base, base+n, cx);
+                flag = true;
+            }
+        }
+
+        if (! (j >= emsb and (ex[j] >> k) == 0) ) {
+            QMul(base, base, base, ntt);
+            CarryPropagation(base, n, s);
+            REDC(base, mx, mu, r_bits, s, n);
+        }
+    }
+
+    REDC_Out(cx, mx, mu, r_bits, s, n);
+
+    delete [] base;
+}
+
+void TransformZZtoCPoly(uint64_t *ax, const NTL::ZZ a, size_t n, size_t s) {    
+    NTL::ZZ a_copy = a;
+    for (size_t i = 0; i < n; i++) {
+        ax[i] = a_copy % (1<<s);
+        a_copy /= (1<<s);
+    }
+}
+
+void REDC_precompute(uint64_t *mx, uint64_t *rsx, uint64_t &mu, ZZ m, size_t r_bits, size_t s, size_t N) {
+    ZZ r, r_sqr;
+    r = (ZZ(1) << r_bits) % m;
+    r_sqr = (r << r_bits) % m;
+    // InvMod(r_inv, r, m);
+
+    TransformZZtoCPoly(rsx, r_sqr, N, s);
+    TransformZZtoCPoly(mx, m, N, s);
+
+
+    uint64_t b = 1ULL << s;
+    uint64_t m_mod_b = m % b;
+    uint64_t m_inv_b;
+
+    m_inv_b = InvMod(m_mod_b, b);
+
+    mu = b - m_inv_b;
+
 }
 
 // void MemoryPool::Init(size_t n) {

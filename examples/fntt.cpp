@@ -88,6 +88,7 @@ int main(int argc, char const *argv[]) {
 
     cout << "ax_fft = "; print_vector(ax_fft, N); cout << endl;
     cout << "bx_fft = "; print_vector(bx_fft, N); cout << endl;
+    cout << "cx_fft = "; print_vector(cx_fft, N); cout << endl;
 
     
     for (size_t i = 0; i < N; i++) {

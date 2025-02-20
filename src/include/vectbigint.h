@@ -3,6 +3,9 @@
 
 #include "ntt.h"
 
+#include <NTL/ZZ.h>
+
+
 namespace polycalc {
 
 void LeftShift(uint64_t *cx, const uint64_t *ax, size_t shift, size_t n, size_t s);
@@ -35,6 +38,18 @@ void FastModExp(uint64_t *cx, const uint64_t *ax, const uint64_t *ex, const uint
 bool IsBiggerOrEqual(const uint64_t *ax, const uint64_t *bx, size_t n);
 
 void QMul(uint64_t *cx, const uint64_t *ax, const uint64_t *bx, NTTInstance ntt);
+void QMul(uint64_t *cx, const uint64_t *bx, NTTInstance ntt);
+
+void REDC_precompute(uint64_t *mx, uint64_t *rsx, uint64_t &mu, NTL::ZZ m, size_t r_bits, size_t s, size_t N);
+
+void REDC(uint64_t *cx, const uint64_t *mx, uint64_t mu, size_t r_bits, size_t s, size_t N);
+
+void REDC_In(uint64_t *cx, const uint64_t *ax, const uint64_t *rsx, const uint64_t *mx, uint64_t mu, size_t r_bits, size_t s, size_t N, NTTInstance ntt);
+void REDC_In(uint64_t *cx, const uint64_t *rsx, const uint64_t *mx, uint64_t mu, size_t r_bits, size_t s, size_t N, NTTInstance ntt);
+void REDC_Out(uint64_t *cx, const uint64_t *mx, uint64_t mu, size_t r_bits, size_t s, size_t N);
+void REDC_Out(uint64_t *cx, const uint64_t *ax, const uint64_t *mx, uint64_t mu, size_t r_bits, size_t s, size_t N);
+
+void FastModExpREDC(uint64_t *cx, const uint64_t *ax, const uint64_t *ex, const uint64_t *mx, const uint64_t *rsx, uint64_t mu, size_t r_bits, size_t n, size_t s, NTTInstance ntt);
 
 // memory pool for convenience 
 // class MemoryPool {

@@ -53,3 +53,11 @@ void PrintArray(const uint64_t *ax, size_t n) {
     }
     std::cout << "]" << std::endl;
 }
+
+NTL::ZZ PrintAll(const uint64_t *ax, size_t n, size_t s, std::string var_name) {
+    std::cout << var_name << "x = "; PrintArray(ax, n);
+    NTL::ZZ a;
+    ReconstructZZfromCPoly(a, ax, n, s);
+    std::cout << var_name << " = " << a << " bits:" << NumBits(a) << std::endl;
+    return a;
+}
