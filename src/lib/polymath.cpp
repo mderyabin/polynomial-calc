@@ -200,6 +200,25 @@ void ComputeTwiddleFactorsNaive(uint64_t *tf, size_t N, uint64_t m, bool isinver
     }
 }
 
+void ComputeTwiddleStockham(uint64_t *tf, size_t N, uint64_t m, bool isinverse) {
+    uint64_t g = FindGenerator(m, N << 1);
+
+    if (isinverse) 
+        g = ModInvPrime(g, m);
+
+    size_t logN = MSB(N) - 1;
+
+    // uint64_t gg = ModMult(g, g, m);
+    // gg = ModMult(gg, g, m);
+
+    uint64_t prec = ShoupPrecompute(g, m);
+
+    tf[0] = 1;
+    for (size_t i = 1; i < N; i++) {
+        tf[i] = ModMulShoup(tf[i-1], g, m, prec);
+    }
+}
+
 void ComputeNWCSequence(uint64_t *pows, size_t N, uint64_t m, bool isinverse) {
     uint64_t g = FindGenerator(m, 2*N);
     if (isinverse) g = ModInvPrime(g, m);
@@ -232,9 +251,10 @@ void iNWC(uint64_t *res, const uint64_t *ax, const uint64_t *ipows, size_t N, ui
 
 void NaiveNTT(uint64_t *res, const uint64_t *ax, const uint64_t *tf, const uint64_t *pows, size_t N, uint64_t m) {
     uint64_t *tx = new uint64_t[N];
-    NWC(tx, ax, pows, N, m);
+    // NWC(tx, ax, pows, N, m);
     for (size_t i = 0; i < N; i++) {
-        res[i] = ComputeValue(tf[i], tx, N, m);
+        // res[i] = ComputeValue(tf[i], tx, N, m);
+        res[i] = ComputeValue(tf[i], ax, N, m);
     }
     delete [] tx;
 }
@@ -249,6 +269,77 @@ void NaiveInvNTT(uint64_t *res, const uint64_t *ax, const uint64_t *itf, const u
     }
     iNWC(res, tx, ipows, N, m);
     delete [] tx;
+}
+
+void StockhamNTT(uint64_t *ax, const uint64_t *tf, size_t N, uint64_t q, uint64_t prec, size_t logq) { 
+    uint64_t *buffer = new uint64_t[N];
+
+    uint64_t *src, *dst;
+    src = ax;
+    dst = buffer;
+
+    size_t hN = N>>1; // half of N
+
+    size_t logN = MSB(N) - 1;
+
+    size_t m, t, stride;
+    size_t sidx1, sidx2;
+    size_t didx1, didx2;
+
+    uint64_t w, tw_v;
+    uint64_t v, u;
+
+    for (size_t s = 0; s < logN; s++) {
+        m = 1<<s;               // Number of blocks
+        t = N / (2 * m);        // Size of each butterfly group
+        stride = N >> (s + 1);   // Distance between twiddles
+
+        // std::cout << "s = " << s << std::endl; 
+        // std::cout << "m = " << m << std::endl; 
+        // std::cout << "t = " << t << std::endl; 
+        // std::cout << "stride = " << stride << std::endl; 
+
+        for (size_t j = 0; j < m; j++) {
+            w = tf[j + stride]; // Twiddle for this butterfly
+
+            // std::cout << " ----- " << std::endl;
+            // std::cout << "w = " << w << std::endl << std::endl; 
+
+
+            for (size_t i = 0; i < t; i++) {
+                // compute indexes for source
+                sidx1 = (2*j + 0)*t + i;
+                sidx2 = (2*j + 1)*t + i;
+
+                // compute indexes for destination
+                didx1 = (j + 0) * t + i;
+                didx2 = (j + m) * t + i;
+
+                // std::cout << sidx1 << " " << sidx2 << std::endl; 
+                // std::cout << didx1 << " " << didx2 << std::endl; 
+                // std::cout << std::endl; 
+
+                // read data
+                u = src[sidx1];
+                v = src[sidx2];
+
+                // main mult
+                ModMultBarrettEq(v, w, q, prec, logq);
+                
+                // butterfly add/sub
+                dst[didx1] = ModAdd(u, v, q);
+                dst[didx2] = ModSub(u, v, q);
+            }
+        }
+
+        //swapping source and destination for the next stage
+        std::swap(src, dst);
+    }
+    
+    if (ax!=src)
+        std::copy(src, src+N, ax);
+    
+    delete [] buffer;
 }
 
 // using algorithm from https://eprint.iacr.org/2016/504.pdf
