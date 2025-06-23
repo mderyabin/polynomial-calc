@@ -57,7 +57,9 @@ void ShoupPrecompute(uint64_t *prec_c, const uint64_t *c, size_t n, uint64_t m);
 void CooleyTukeyForwardNTT(uint64_t *ax, const uint64_t *tf, size_t N, uint64_t m, const uint64_t *prec_tf, size_t logN);
 void GentlemanSandeInverseNTT(uint64_t *ax, const uint64_t *itf, size_t N, uint64_t m, uint64_t invN, const uint64_t *prec_itf, uint64_t prec_invN);
 
-
+void StockhamNTT(uint64_t *ax, const uint64_t *tf, size_t N, uint64_t q, uint64_t prec, size_t logm);
+void ComputeTwiddleStockham(uint64_t *tf, size_t N, uint64_t m, bool isinverse);
+void NWC(uint64_t *res, const uint64_t *ax, const uint64_t *pows, size_t N, uint64_t m);
 } 
 
 #endif /* __POLYMATH_H__ */
